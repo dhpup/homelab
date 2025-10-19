@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+  namespace: argocd
+spec:
+  project: setup
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+  sources:
+  - chart: metrics-server
+    repoURL: https://kubernetes-sigs.github.io/metrics-server/
+    targetRevision: 3.8.2
+    helm:
+      valueFiles:
+      - $values/configs/setup/metrics-server/values.yaml
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    ref: values
+  destination:
+    name: in-cluster
+    namespace: metrics-server
+

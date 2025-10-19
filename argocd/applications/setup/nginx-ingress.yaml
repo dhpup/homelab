@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx-ingress
+  namespace: argocd
+spec:
+  project: setup
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+  sources:
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    path: configs/setup/nginx-ingress
+  destination:
+    name: in-cluster
+    namespace: ingress-nginx

@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+spec:
+  project: setup
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+  sources:
+  - chart: cert-manager
+    repoURL: https://charts.jetstack.io
+    targetRevision: v1.18.2
+    helm:
+      valueFiles:
+      - $values/configs/setup/cert-manager/values.yaml
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    ref: values
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    path: configs/setup/cert-manager/configs
+  destination:
+    name: in-cluster
+    namespace: cert-manager
+

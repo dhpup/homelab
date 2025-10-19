@@ -1,0 +1,46 @@
+externalURL: https://registry.burrell.tech
+
+expose:
+  type: ingress
+  ingress:
+    hosts:
+      core: registry.burrell.tech
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      # cert-manager.io/cluster-issuer: selfsigned
+      external-dns.alpha.kubernetes.io/target: 'burrell.tech'
+      external-dns.alpha.kubernetes.io/cloudflare-proxied: 'true'
+  tls:
+    certSource: secret
+    secret:
+      secretName: registry.burrell.tech-tls
+
+trivy:
+  enabled: false
+notary:
+  enabled: false
+
+persistence:
+  persistentVolumeClaim:
+    registry:
+      existingClaim: registry
+    chartmuseum:
+      existingClaim: chartmuseum
+    jobservice:
+      jobLog:
+        existingClaim: jobservice
+    database:
+      existingClaim: database
+    redis:
+      existingClaim: redis
+
+updateStrategy:
+  type: Recreate
+
+existingSecretSecretKey: harbor-secrets
+existingSecretAdminPasswordKey: harbor-secrets
+
+registry:
+  credentials:
+    username: root
+    existingSecret: harbor-secrets

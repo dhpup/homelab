@@ -1,0 +1,9 @@
+domain: burrell.tech home.burrell.tech k8s.burrell.tech
+service:
+  annotations:
+    metallb.universe.tf/address-pool: bgp-pool
+  loadBalancerIP: 172.19.0.1
+fallthrough:
+  enabled: true
+  zones:
+    - burrell.tech

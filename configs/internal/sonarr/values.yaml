@@ -1,0 +1,51 @@
+image:
+  pullPolicy: IfNotPresent
+  repository: ghcr.io/onedr0p/sonarr
+  tag: 3.0.10.1567
+
+env:
+  TZ: America/Toronto
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: letsencrypt
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.0.0/16,172.16.0.0/12"
+      nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+      external-dns.alpha.kubernetes.io/exclude: 'true'
+    hosts:
+      - host: sonarr.home.burrell.tech
+        paths:
+        - path: /
+          pathType: Prefix
+    tls:
+    - secretName: sonarr.home.burrell.tech
+      hosts:
+      - sonarr.home.burrell.tech
+
+persistence:
+  media:
+    enabled: true
+    type: nfs
+    server: "192.168.1.10"
+    path: /Media/Television
+    mountPath: /media
+  nzbget:
+    enabled: true
+    type: nfs
+    server: "192.168.1.10"
+    path: /Media/nzbget
+    mountPath: /nzbget
+  config:
+    enabled: true
+    storageClass: longhorn
+    size: 50Gi
+
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+  fsGroup: 0

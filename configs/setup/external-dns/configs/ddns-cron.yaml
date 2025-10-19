@@ -1,0 +1,100 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ddns
+rules:
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses"]
+  verbs: ["*"]
+- apiGroups: ["batch"]
+  resources: ["cronjobs"]
+  verbs: ['*']
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ddns
+subjects:
+- kind: ServiceAccount
+  name: ddns
+  namespace: external-dns
+roleRef:
+  kind: Role
+  name: ddns
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ddns
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ddns
+spec:
+  schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: ddns
+          containers:
+          - name: ddns
+            image: alpine/k8s:1.26.0
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - |
+              export CRONJOB_UID=$(kubectl get cronjob ddns -o=jsonpath='{.metadata.uid}')
+              cat << EOF > /tmp/ingress.yml && kubectl apply -f /tmp/ingress.yml
+              apiVersion: networking.k8s.io/v1
+              kind: Ingress
+              metadata:
+                name: ip-proxied
+                annotations:
+                  external-dns.alpha.kubernetes.io/hostname: '$IP_HOSTNAME_PROXIED'
+                  external-dns.alpha.kubernetes.io/target: '$(curl --silent ifconfig.me)'
+                  external-dns.alpha.kubernetes.io/cloudflare-proxied: 'true'
+                ownerReferences:
+                  - apiVersion: batch/v1
+                    blockOwnerDeletion: false
+                    controller: true
+                    kind: CronJob
+                    name: ddns
+                    uid: $CRONJOB_UID
+              spec:
+                rules:
+                - host: '$IP_HOSTNAME_PROXIED'
+              ---
+              apiVersion: networking.k8s.io/v1
+              kind: Ingress
+              metadata:
+                name: ip-unproxied
+                annotations:
+                  external-dns.alpha.kubernetes.io/hostname: '$IP_HOSTNAME_UNPROXIED'
+                  external-dns.alpha.kubernetes.io/target: '$(curl --silent ifconfig.me)'
+                  external-dns.alpha.kubernetes.io/cloudflare-proxied: 'false'
+                ownerReferences:
+                  - apiVersion: batch/v1
+                    blockOwnerDeletion: false
+                    controller: true
+                    kind: CronJob
+                    name: ddns
+                    uid: $CRONJOB_UID
+              spec:
+                rules:
+                - host: '$IP_HOSTNAME_UNPROXIED'
+              EOF
+            env:
+            - name: IP_HOSTNAME_PROXIED
+              value: burrell.tech
+            - name: IP_HOSTNAME_UNPROXIED
+              value: unproxied.burrell.tech
+          restartPolicy: OnFailure

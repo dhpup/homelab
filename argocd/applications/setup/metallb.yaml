@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metallb
+  namespace: argocd
+spec:
+  project: setup
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+  sources:
+  - chart: metallb
+    repoURL: https://metallb.github.io/metallb
+    targetRevision: 0.13.7
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    path: configs/setup/metallb
+  destination:
+    name: in-cluster
+    namespace: metallb-system
+  ignoreDifferences: # Ignore dynamic parameters that cause incorrect OutOfSync status
+    - kind: CustomResourceDefinition
+      group: apiextensions.k8s.io
+      jsonPointers:
+      - /spec/conversion/webhook/clientConfig/caBundle
