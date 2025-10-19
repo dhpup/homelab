@@ -1,4 +1,4 @@
-domain: burrell.tech home.burrell.tech k8s.burrell.tech
+domain: homelab.local home.homelab.local k8s.homelab.local
 service:
   annotations:
     metallb.universe.tf/address-pool: bgp-pool
@@ -6,4 +6,4 @@ service:
 fallthrough:
   enabled: true
   zones:
-    - burrell.tech
+    - homelab.local

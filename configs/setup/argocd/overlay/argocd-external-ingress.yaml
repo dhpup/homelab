@@ -7,12 +7,12 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"  # Fixes infinite 307 redirects.
     cert-manager.io/cluster-issuer: letsencrypt # Generate a letsencrypt cert when cert-manager becomes available
-    external-dns.alpha.kubernetes.io/target: 'burrell.tech'
+    external-dns.alpha.kubernetes.io/target: 'homelab.local'
     external-dns.alpha.kubernetes.io/cloudflare-proxied: 'true'
 spec:
   ingressClassName: nginx
   rules:
-  - host: api.burrell.tech
+  - host: api.homelab.local
     http:
       paths:
       - path: /api/webhook
@@ -31,5 +31,5 @@ spec:
               name: https
   tls:
   - hosts:
-    - api.burrell.tech
-    secretName: api.burrell.tech-tls
+    - api.homelab.local
+    secretName: api.homelab.local-tls

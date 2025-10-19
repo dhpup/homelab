@@ -1,5 +1,5 @@
 api:
-  host: kargo.k8s.burrell.tech
+  host: kargo.k8s.homelab.local
   tls:
     enabled: false
   ingress:

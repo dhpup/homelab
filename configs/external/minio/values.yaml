@@ -12,14 +12,14 @@ ingress:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-    external-dns.alpha.kubernetes.io/target: 'burrell.tech'
+    external-dns.alpha.kubernetes.io/target: 'homelab.local'
     external-dns.alpha.kubernetes.io/cloudflare-proxied: 'true'
   hosts:
-    - s3.burrell.tech
+    - s3.homelab.local
   tls:
-    - secretName: s3.burrell.tech-tls
+    - secretName: s3.homelab.local-tls
       hosts:
-      - s3.burrell.tech
+      - s3.homelab.local
 consoleIngress:
   enabled: true
   annotations:
@@ -31,11 +31,11 @@ consoleIngress:
     nginx.ingress.kubernetes.io/proxy-body-size: 1024m
     external-dns.alpha.kubernetes.io/exclude: 'true'
   hosts:
-    - minio.k8s.burrell.tech
+    - minio.k8s.homelab.local
   tls:
-    - secretName: minio.k8s.burrell.tech-tls
+    - secretName: minio.k8s.homelab.local-tls
       hosts:
-      - minio.k8s.burrell.tech
+      - minio.k8s.homelab.local
 resources:
   requests:
     memory: 4Gi

@@ -24,14 +24,14 @@ data:
     hs.status = "Healthy"
     hs.message = "Controller doesn't report resource status"
     return hs
-  url: "https://argocd.k8s.burrell.tech"
+  url: "https://argocd.k8s.homelab.local"
   dex.config: |
     connectors:
     - type: ldap
-      name: burrell.tech
+      name: homelab.local
       id: ad
       config:
-        host: ad.burrell.tech:389
+        host: ad.homelab.local:389
         insecureNoSSL: true
         insecureSkipVerify: true
         bindDN: "$argocd-ldap-secret:dex.ldap.bindDN"
@@ -76,7 +76,7 @@ metadata:
   namespace: argocd
 data:
   context: |
-    argocdUrl: https://argocd.k8s.burrell.tech
+    argocdUrl: https://argocd.k8s.homelab.local
   service.slack.slack: |
     token: $SLACK-TOKEN
     username: "@argocd_notifications"

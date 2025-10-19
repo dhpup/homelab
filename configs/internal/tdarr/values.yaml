@@ -14,7 +14,7 @@ service:
     type: LoadBalancer
     annotations:
       metallb.universe.tf/address-pool: bgp-pool
-      coredns.io/hostname: server.tdarr.home.burrell.tech
+      coredns.io/hostname: server.tdarr.home.homelab.local
     externalTrafficPolicy: Local
     ports:
       controller-lb:
@@ -35,14 +35,14 @@ ingress:
       nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.0.0/16,172.16.0.0/12"
       external-dns.alpha.kubernetes.io/exclude: 'true'
     hosts:
-      - host: tdarr.home.burrell.tech
+      - host: tdarr.home.homelab.local
         paths:
         - path: /
           pathType: Prefix
     tls:
-    - secretName: tdarr.home.burrell.tech
+    - secretName: tdarr.home.homelab.local
       hosts:
-      - tdarr.home.burrell.tech
+      - tdarr.home.homelab.local
 
 node:
   enabled: true

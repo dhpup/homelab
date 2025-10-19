@@ -19,14 +19,14 @@ ingress:
       external-dns.alpha.kubernetes.io/exclude: 'true'
 
     hosts:
-      - host: bazarr.home.burrell.tech
+      - host: bazarr.home.homelab.local
         paths:
         - path: /
           pathType: Prefix
     tls:
-    - secretName: bazarr.home.burrell.tech
+    - secretName: bazarr.home.homelab.local
       hosts:
-      - bazarr.home.burrell.tech
+      - bazarr.home.homelab.local
 
 persistence:
   media:

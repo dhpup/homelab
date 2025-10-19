@@ -4,7 +4,7 @@ metadata:
   name: smtp
   annotations:
     metallb.universe.tf/address-pool: bgp-pool
-    coredns.io/hostname: smtp.k8s.burrell.tech
+    coredns.io/hostname: smtp.k8s.homelab.local
 spec:
   ports:
     - name: smtp

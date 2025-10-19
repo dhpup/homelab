@@ -22,14 +22,14 @@ ingress:
       external-dns.alpha.kubernetes.io/exclude: 'true'
 
     hosts:
-      - host: paperless.burrell.tech
+      - host: paperless.homelab.local
         paths:
         - path: /
           pathType: Prefix
     tls:
-    - secretName: paperless.burrell.tech
+    - secretName: paperless.homelab.local
       hosts:
-      - paperless.burrell.tech
+      - paperless.homelab.local
 
 persistence:
   consume:

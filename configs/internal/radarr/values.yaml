@@ -17,14 +17,14 @@ ingress:
       external-dns.alpha.kubernetes.io/exclude: 'true'
 
     hosts:
-      - host: radarr.home.burrell.tech
+      - host: radarr.home.homelab.local
         paths:
         - path: /
           pathType: Prefix
     tls:
-    - secretName: radarr.home.burrell.tech
+    - secretName: radarr.home.homelab.local
       hosts:
-      - radarr.home.burrell.tech
+      - radarr.home.homelab.local
 
 persistence:
   media:

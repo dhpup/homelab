@@ -20,17 +20,17 @@ cloneStaticSiteFromGit:
 
 ingress:
   enabled: true
-  hostname: burrell.tech
+  hostname: homelab.local
   tls: true
-  tlsSecret: burrell.tech
+  tlsSecret: homelab.local
 
   extraHosts:
-  - name: www.burrell.tech
+  - name: www.homelab.local
     path: /
   extraTls:
     - hosts:
-      - www.burrell.tech
-      secretName: www.burrell.tech-tls
+      - www.homelab.local
+      secretName: www.homelab.local-tls
 
   pathType: Prefix
   path: /
@@ -41,7 +41,7 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/default-backend: main-site-error-pages
     nginx.ingress.kubernetes.io/custom-http-errors: "401,403,404,500,501,502,503"
-    external-dns.alpha.kubernetes.io/target: 'burrell.tech'
+    external-dns.alpha.kubernetes.io/target: 'homelab.local'
     external-dns.alpha.kubernetes.io/cloudflare-proxied: 'true'
 
 serverBlock: |-

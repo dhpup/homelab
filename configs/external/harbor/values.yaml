@@ -1,19 +1,19 @@
-externalURL: https://registry.burrell.tech
+externalURL: https://registry.homelab.local
 
 expose:
   type: ingress
   ingress:
     hosts:
-      core: registry.burrell.tech
+      core: registry.homelab.local
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt
       # cert-manager.io/cluster-issuer: selfsigned
-      external-dns.alpha.kubernetes.io/target: 'burrell.tech'
+      external-dns.alpha.kubernetes.io/target: 'homelab.local'
       external-dns.alpha.kubernetes.io/cloudflare-proxied: 'true'
   tls:
     certSource: secret
     secret:
-      secretName: registry.burrell.tech-tls
+      secretName: registry.homelab.local-tls
 
 trivy:
   enabled: false
