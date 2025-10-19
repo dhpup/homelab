@@ -24,7 +24,7 @@ data:
     hs.status = "Healthy"
     hs.message = "Controller doesn't report resource status"
     return hs
-  url: "https://argocd.k8s.homelab.local"
+  url: "https://argocd.homelab.local"
   dex.config: |
     connectors:
     - type: ldap
@@ -76,7 +76,7 @@ metadata:
   namespace: argocd
 data:
   context: |
-    argocdUrl: https://argocd.k8s.homelab.local
+    argocdUrl: https://argocd.homelab.local
   service.slack.slack: |
     token: $SLACK-TOKEN
     username: "@argocd_notifications"

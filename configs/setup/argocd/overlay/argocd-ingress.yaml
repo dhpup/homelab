@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: argocd.k8s.homelab.local
+  - host: argocd.homelab.local
     http:
       paths:
       - path: /
@@ -24,5 +24,5 @@ spec:
               name: https
   tls:
   - hosts:
-    - argocd.k8s.homelab.local
-    secretName: argocd.k8s.homelab.local-tls
+    - argocd.homelab.local
+    secretName: argocd.homelab.local-tls
