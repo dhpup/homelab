@@ -1,5 +1,5 @@
 ingress:
-  host: secrets.k8s.homelab.local
+  host: secrets.homelab.local
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
     external-dns.alpha.kubernetes.io/exclude: 'true'
@@ -8,9 +8,9 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
     nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.0.0/16,172.16.0.0/12"
   tls:
-  - secretName: secrets.k8s.homelab.local
+  - secretName: secrets.homelab.local
     hosts:
-      - secrets.k8s.homelab.local
+      - secrets.homelab.local
 
 configs:
   defaultScope: "cluster-wide"

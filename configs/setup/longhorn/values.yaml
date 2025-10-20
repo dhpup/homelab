@@ -1,8 +1,8 @@
 ingress:
   enabled: true
-  host: longhorn.k8s.homelab.local
+  host: longhorn.homelab.local
   tls: true
-  tlsSecret: longhorn.k8s.homelab.local
+  tlsSecret: longhorn.homelab.local
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
     nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.0.0/16,172.16.0.0/12"

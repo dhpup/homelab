@@ -1,4 +1,5 @@
-apiVersion: v1
+kubectl -n sealed-secrets get pods
+kubectl -n sealed-secrets logs -l app.kubernetes.io/name=sealed-secrets --tail=200apiVersion: v1
 kind: ConfigMap
 metadata:
   name: home-assistant-cm

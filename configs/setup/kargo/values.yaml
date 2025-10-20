@@ -1,5 +1,5 @@
 api:
-  host: kargo.k8s.homelab.local
+  host: kargo.homelab.local
   tls:
     enabled: false
   ingress:

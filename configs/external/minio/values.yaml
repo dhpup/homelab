@@ -31,11 +31,11 @@ consoleIngress:
     nginx.ingress.kubernetes.io/proxy-body-size: 1024m
     external-dns.alpha.kubernetes.io/exclude: 'true'
   hosts:
-    - minio.k8s.homelab.local
+    - minio.homelab.local
   tls:
-    - secretName: minio.k8s.homelab.local-tls
+    - secretName: minio.homelab.local-tls
       hosts:
-      - minio.k8s.homelab.local
+      - minio.homelab.local
 resources:
   requests:
     memory: 4Gi
