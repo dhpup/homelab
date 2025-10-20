@@ -136,8 +136,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     cert-manager.io/cluster-issuer: selfsigned
-    external-dns.alpha.kubernetes.io/target: 'homelab.local'
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: 'true'
+    # external-dns annotations removed (not using ExternalDNS)
 spec:
   ingressClassName: nginx
   rules:
@@ -166,7 +165,7 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-    external-dns.alpha.kubernetes.io/exclude: 'true'
+  # external-dns annotation removed (not using ExternalDNS)
 spec:
   ingressClassName: nginx
   rules:

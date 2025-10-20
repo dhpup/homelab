@@ -11,7 +11,7 @@ ingress:
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-      external-dns.alpha.kubernetes.io/exclude: 'true'
+        # external-dns annotation removed (not using ExternalDNS)
     hosts:
       - host: nzbget.home.homelab.local
         paths:
