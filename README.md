@@ -1,6 +1,5 @@
 # Self-Managing Kubernetes Homelab w/ ArgoCD
 
-This repository serves as the immutable source of configurations for my personal homelab and is deployed using ArgoCD. The configurations contained in the repository self-manage ArgoCD as well as the applications. With various operators like external-dns, cert-manager, and metallb, this homelab pretty much manages itself. Once set up, there is zero intervention required to keep things running.
 
 Applications are divided into ArgoCD projects by their respective types.
 
@@ -22,7 +21,6 @@ Applications are divided into ArgoCD projects by their respective types.
 
 - ![App Status](https://api.homelab.local/api/badge?name=argocd&revision=true) [`argocd`](https://argoproj.github.io/cd/) - The GitOps operator responsible for managing the cluster
 - ![App Status](https://api.homelab.local/api/badge?name=cert-manager&revision=true) [`cert-manager`](https://cert-manager.io/) - Automatic SSL certificate generation, configured for Cloudflare
-- ![App Status](https://api.homelab.local/api/badge?name=external-dns&revision=true) [`external-dns`](https://github.com/kubernetes-sigs/external-dns) - Automatically create DNS entries, configured for Lets Encrypt
 - ![App Status](https://api.homelab.local/api/badge?name=k8s-gateway&revision=true) [`k8s-gateway`](https://github.com/ori-edge/k8s_gateway) - CoreDNS controller plugin
 - ![App Status](https://api.homelab.local/api/badge?name=metacontroller&revision=true) [`metacontroller`](https://metacontroller.github.io/metacontroller/intro.html) - For rapid prototyping an deployment of custom controllers
 - ![App Status](https://api.homelab.local/api/badge?name=metallb&revision=true) [`metallb`](https://metallb.universe.tf/) - A loadbalancer for non-cloud deployments
