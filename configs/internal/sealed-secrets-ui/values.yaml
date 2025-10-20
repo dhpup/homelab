@@ -1,7 +1,7 @@
 ingress:
   host: secrets.homelab.local
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt
+    cert-manager.io/cluster-issuer: selfsigned
     external-dns.alpha.kubernetes.io/exclude: 'true'
     nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
     nginx.ingress.kubernetes.io/proxy-body-size: 1024m

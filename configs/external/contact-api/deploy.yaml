@@ -60,7 +60,7 @@ metadata:
   name: contact-api-ingress
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: letsencrypt
+    cert-manager.io/cluster-issuer: selfsigned
     external-dns.alpha.kubernetes.io/target: 'homelab.local'
     external-dns.alpha.kubernetes.io/cloudflare-proxied: 'true'
     nginx.ingress.kubernetes.io/cors-allow-methods: POST
