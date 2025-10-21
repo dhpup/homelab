@@ -36,6 +36,8 @@ persistence:
     name: nzbget-pvc
     accessMode: ReadWriteOnce
     mountPath: /nzbget
+    storageClass: local-path
+    size: 50Gi
   config:
     enabled: true
     storageClass: local-path
