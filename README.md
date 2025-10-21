@@ -14,31 +14,31 @@ Applications are divided into ArgoCD projects by their respective types.
 
 ## Applications
 
-![App Status](https://argocd.homelab.local/api/badge?name=app-of-apps&revision=true) [`app-of-apps`](argocd/app-of-apps.yaml)
+🔄 [`app-of-apps`](argocd/app-of-apps.yaml)
 
 ### Setup
 
-- ![App Status](https://argocd.homelab.local/api/badge?name=argocd&revision=true) [`argocd`](https://argoproj.github.io/cd/) - The GitOps operator responsible for managing the cluster
-- ![App Status](https://argocd.homelab.local/api/badge?name=cert-manager&revision=true) [`cert-manager`](https://cert-manager.io/) - Automatic SSL certificate generation using self-signed certificates
-- ![App Status](https://argocd.homelab.local/api/badge?name=external-secrets&revision=true) [`external-secrets`](https://external-secrets.io/) - Sync secrets from external secret management systems
-- ![App Status](https://argocd.homelab.local/api/badge?name=k8s-gateway&revision=true) [`k8s-gateway`](https://github.com/ori-edge/k8s_gateway) - CoreDNS controller plugin
-- ![App Status](https://argocd.homelab.local/api/badge?name=metallb&revision=true) [`metallb`](https://metallb.universe.tf/) - A loadbalancer for non-cloud deployments
-- ![App Status](https://argocd.homelab.local/api/badge?name=metrics-server&revision=true) [`metrics-server`](https://github.com/kubernetes-sigs/metrics-server) - Reports resource usage when running `kubectl top`
-- ![App Status](https://argocd.homelab.local/api/badge?name=nginx-ingress&revision=true) [`nginx-ingress`](https://github.com/kubernetes/ingress-nginx) - The ingress controller for the cluster (Official Kubernetes Ingress)
-- ![App Status](https://argocd.homelab.local/api/badge?name=sealed-secrets&revision=true) [`sealed-secrets`](https://github.com/bitnami-labs/sealed-secrets) - A controller for encrypting and decrypting secrets
+- 🔵 [`argocd`](https://argoproj.github.io/cd/) - The GitOps operator responsible for managing the cluster
+- 🔐 [`cert-manager`](https://cert-manager.io/) - Automatic SSL certificate generation using self-signed certificates
+- 🔒 [`external-secrets`](https://external-secrets.io/) - Sync secrets from external secret management systems
+- 🌐 [`k8s-gateway`](https://github.com/ori-edge/k8s_gateway) - CoreDNS controller plugin
+- ⚖️ [`metallb`](https://metallb.universe.tf/) - A loadbalancer for non-cloud deployments
+- 📊 [`metrics-server`](https://github.com/kubernetes-sigs/metrics-server) - Reports resource usage when running `kubectl top`
+- 🚀 [`nginx-ingress`](https://github.com/kubernetes/ingress-nginx) - The ingress controller for the cluster (Official Kubernetes Ingress)
+- 🔐 [`sealed-secrets`](https://github.com/bitnami-labs/sealed-secrets) - A controller for encrypting and decrypting secrets
 
 ### External
 
-- ![App Status](https://argocd.homelab.local/api/badge?name=ombi&revision=true) [`ombi`](https://ombi.io/) - A multimedia request platform for Plex
+- 🎬 [`ombi`](https://ombi.io/) - A multimedia request platform for Plex
 
 ### Internal
 
-- ![App Status](https://argocd.homelab.local/api/badge?name=nzbget&revision=true) [`nzbget`](https://nzbget.net/) - A Usenet download platform
-- ![App Status](https://argocd.homelab.local/api/badge?name=radarr&revision=true) [`radarr`](https://radarr.video/) - Automatically search, download, and manage movies
-- ![App Status](https://argocd.homelab.local/api/badge?name=sonarr&revision=true) [`sonarr`](https://sonarr.tv/) - Automatically search, download, and manage television series
-- ![App Status](https://argocd.homelab.local/api/badge?name=sealed-secrets-ui&revision=true) [`sealed-secrets-ui`](https://github.com/komodor-io/sealed-secrets-ui) - Web UI for managing sealed secrets
-- ![App Status](https://argocd.homelab.local/api/badge?name=tdarr&revision=true) [`tdarr`](https://tdarr.io/) - An automatic multimedia transcoder
-- ![App Status](https://argocd.homelab.local/api/badge?name=bazarr&revision=true) [`bazarr`](https://www.bazarr.media/) - Automatically search, download, and manage subtitles
+- ⬇️ [`nzbget`](https://nzbget.net/) - A Usenet download platform
+- 🎥 [`radarr`](https://radarr.video/) - Automatically search, download, and manage movies
+- 📺 [`sonarr`](https://sonarr.tv/) - Automatically search, download, and manage television series
+- 🔐 [`sealed-secrets-ui`](https://github.com/komodor-io/sealed-secrets-ui) - Web UI for managing sealed secrets
+- ⚙️ [`tdarr`](https://tdarr.io/) - An automatic multimedia transcoder
+- 📝 [`bazarr`](https://www.bazarr.media/) - Automatically search, download, and manage subtitles
 
 ## Bootstrapping
 
