@@ -34,6 +34,7 @@ Applications are divided into ArgoCD projects by their respective types.
 ### Internal
 
 - ⬇️ [`nzbget`](https://nzbget.net/) - A Usenet download platform
+- 🔍 [`prowlarr`](https://prowlarr.com/) - An indexer manager for the *arr stack
 - 🎥 [`radarr`](https://radarr.video/) - Automatically search, download, and manage movies
 - 📺 [`sonarr`](https://sonarr.tv/) - Automatically search, download, and manage television series
 - 🔐 [`sealed-secrets-ui`](https://github.com/komodor-io/sealed-secrets-ui) - Web UI for managing sealed secrets

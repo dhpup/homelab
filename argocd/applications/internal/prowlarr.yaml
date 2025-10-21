@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prowlarr
+  namespace: argocd
+spec:
+  project: internal
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+  sources:
+  - chart: prowlarr
+    repoURL: https://k8s-at-home.com/charts/
+    targetRevision: 4.5.3
+    helm:
+      valueFiles:
+      - $values/configs/internal/prowlarr/values.yaml
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    ref: values
+  destination:
+    name: in-cluster
+    namespace: prowlarr

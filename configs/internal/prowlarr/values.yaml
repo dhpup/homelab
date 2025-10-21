@@ -1,0 +1,36 @@
+image:
+  pullPolicy: IfNotPresent
+
+env:
+  TZ: America/Toronto
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: selfsigned
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+      # external-dns annotation removed (not using ExternalDNS)
+    hosts:
+      - host: prowlarr.homelab.local
+        paths:
+        - path: /
+          pathType: Prefix
+    tls:
+    - secretName: prowlarr.homelab.local
+      hosts:
+      - prowlarr.homelab.local
+
+persistence:
+  config:
+    enabled: true
+    storageClass: local-path
+    size: 10Gi
+
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+  fsGroup: 0
