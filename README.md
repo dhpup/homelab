@@ -33,10 +33,9 @@ Applications are divided into ArgoCD projects by their respective types.
 ### External
 
 - ![App Status](https://api.homelab.local/api/badge?name=chia-node&revision=true) [`chia-node`](https://github.com/Chia-Network/chia-docker) - A Chia node for the Chia cryptocurrency
-- ![App Status](https://api.homelab.local/api/badge?name=contact-api&revision=true) [`contact-api`](https://github.com/noahburrell0/contact-api) - A small API to submit form data from my website to an SMTP relay
 - ![App Status](https://api.homelab.local/api/badge?name=ghost&revision=true) [`ghost`](https://ghost.org/) - Blogging software
-- ![App Status](https://api.homelab.local/api/badge?name=main-site&revision=true) [`main-site`](https://github.com/noahburrell0/burrell-tech) - Combines the Bitnami Nginx and Error Pages charts to deploy my website
-- ![App Status](https://api.homelab.local/api/badge?name=minio&revision=true) [`minio`](https://min.io/) - An S3 compliant object storage system
+- ![App Status](https://api.homelab.local/api/badge?name=ombi&revision=true) [`ombi`](https://ombi.io/) - A multimedia request platform for Plex
+- ![App Status](https://api.homelab.local/api/badge?name=paperless&revision=true) [`paperless`](https://docs.paperless-ngx.com/) - A document management system
 - ![App Status](https://api.homelab.local/api/badge?name=ombi&revision=true) [`ombi`](https://ombi.io/) - A multimedia request platform for Plex
 - ![App Status](https://api.homelab.local/api/badge?name=paperless&revision=true) [`paperless`](https://docs.paperless-ngx.com/) - A document management system
 - ![App Status](https://api.homelab.local/api/badge?name=plex&revision=true) [`plex`](https://www.plex.tv/) - A multimedia server
