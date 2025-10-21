@@ -70,3 +70,12 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 All secrets are encrypted and stored in this repository using [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) by Bitnami. Only the sealing key stored on the cluster can decrypt these secrets. If you are using this repository as the basis for your own homelab or Kubernetes cluster, you will need to seal your own secrets and replace the encrypted ones in this repository. As a result, if you try to deploy the applications contained in this repository using my configurations as-is, most applications will not function correctly due to missing secrets.
 
+## Mac Docker Services
+
+In addition to the Kubernetes cluster, some services run directly on the Mac via Docker for better performance and hardware access:
+
+- **qBittorrent**: Torrent download client (see `homelab-docker/` directory)
+- **Plex**: Media server (see `homelab-docker/` directory)
+
+These services connect to the Kubernetes cluster via network bridges and integrate with the *arr stack (Radarr, Sonarr, Prowlarr) for automated media management.
+
