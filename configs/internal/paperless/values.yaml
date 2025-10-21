@@ -8,6 +8,7 @@ env:
   PAPERLESS_OCR_LANGUAGE: eng
   PAPERLESS_CONSUMER_POLLING: 60
   PAPERLESS_REDIS: redis://paperless-redis-headless:6379
+  PAPERLESS_DBHOST: paperless-postgres
 
 ingress:
   main:
@@ -79,12 +80,4 @@ redis:
 
 # Enable an embedded PostgreSQL for local k3d testing (no PV to keep it simple)
 postgresql:
-  enabled: true
-  postgresqlDatabase: paperless
-  postgresqlUsername: paperless
-  postgresqlPassword: changeme
-  persistence:
-    enabled: false
-  image:
-    repository: postgres
-    tag: "11"
+  enabled: false
