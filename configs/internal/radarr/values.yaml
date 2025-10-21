@@ -29,12 +29,14 @@ persistence:
   media:
     enabled: true
     type: hostPath
-    hostPath: /Users/daneko/homelab-storage/movies
+    hostPath: /homelab-storage/movies
+    hostPathType: Directory
     mountPath: /movies
   downloads:
     enabled: true
     type: hostPath
-    hostPath: /Users/daneko/homelab-storage/downloads
+    hostPath: /homelab-storage/downloads
+    hostPathType: Directory
     mountPath: /homelab-storage/downloads
   nzbget:
     enabled: true
