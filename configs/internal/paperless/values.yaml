@@ -76,3 +76,12 @@ redis:
   master:
     persistence:
       enabled: false
+
+# Enable an embedded PostgreSQL for local k3d testing (no PV to keep it simple)
+postgresql:
+  enabled: true
+  postgresqlDatabase: paperless
+  postgresqlUsername: paperless
+  postgresqlPassword: changeme
+  persistence:
+    enabled: false
