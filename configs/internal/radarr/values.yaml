@@ -34,6 +34,7 @@ persistence:
     # Switched from NFS to a PVC backed by local-path for local k3d clusters
     type: pvc
     name: nzbget-pvc
+    accessMode: ReadWriteOnce
     mountPath: /nzbget
   config:
     enabled: true
