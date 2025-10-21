@@ -1,6 +1,6 @@
 image:
-  # Use public/community image to avoid private registry requirements in local k3d
-  repository: linuxserver/seafile
+  # Use a public Seafile image from Docker Hub to avoid private registry requirements in local k3d
+  repository: seafileltd/seafile
   tag: latest
   pullPolicy: IfNotPresent
 
