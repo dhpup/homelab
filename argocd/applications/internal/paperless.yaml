@@ -18,6 +18,9 @@ spec:
   - repoURL: https://github.com/dhpup/homelab.git
     targetRevision: main
     ref: values
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    path: configs/internal/paperless/configs
   destination:
     name: in-cluster
     namespace: paperless
