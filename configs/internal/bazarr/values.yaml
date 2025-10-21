@@ -14,19 +14,17 @@ ingress:
       cert-manager.io/cluster-issuer: selfsigned
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.0.0/16,172.16.0.0/12"
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-  # external-dns annotation removed (not using ExternalDNS)
-
+      # external-dns annotation removed (not using ExternalDNS)
     hosts:
-      - host: bazarr.home.homelab.local
+      - host: bazarr.homelab.local
         paths:
         - path: /
           pathType: Prefix
     tls:
-    - secretName: bazarr.home.homelab.local
+    - secretName: bazarr.homelab.local
       hosts:
-      - bazarr.home.homelab.local
+      - bazarr.homelab.local
 
 persistence:
   media:
