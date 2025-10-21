@@ -85,3 +85,6 @@ postgresql:
   postgresqlPassword: changeme
   persistence:
     enabled: false
+  image:
+    repository: postgres
+    tag: "11"
