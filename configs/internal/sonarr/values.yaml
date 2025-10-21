@@ -32,6 +32,11 @@ persistence:
     type: hostPath
     hostPath: /Users/daneko/homelab-storage/tv
     mountPath: /tv
+  downloads:
+    enabled: true
+    type: hostPath
+    hostPath: /Users/daneko/homelab-storage/downloads
+    mountPath: /homelab-storage/downloads
   nzbget:
     enabled: true
     # Switched from NFS to a PVC backed by local-path for local k3d clusters
