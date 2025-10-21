@@ -28,7 +28,10 @@ ingress:
 
 persistence:
   media:
-    enabled: false
+    enabled: true
+    type: hostPath
+    hostPath: /Users/daneko/homelab-storage/movies
+    mountPath: /movies
   nzbget:
     enabled: true
     # Switched from NFS to a PVC backed by local-path for local k3d clusters
