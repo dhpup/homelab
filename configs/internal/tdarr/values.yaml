@@ -71,11 +71,7 @@ persistence:
     size: 30Gi
     accessMode: ReadWriteOnce
   media:
-    enabled: true
-    type: nfs
-    server: 192.168.1.10
-    path: /Media
-    mountPath: /media
+    enabled: false
 
 podSecurityContext:
   runAsUser: 0
