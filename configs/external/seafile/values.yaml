@@ -78,3 +78,7 @@ mariadb:
       enabled: true
       storageClass: local-path
       size: 25Gi
+    image:
+      repository: docker.io/library/mariadb
+      tag: 10.5.12
+      pullPolicy: IfNotPresent
