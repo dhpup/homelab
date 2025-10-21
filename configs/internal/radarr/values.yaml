@@ -31,9 +31,9 @@ persistence:
     enabled: false
   nzbget:
     enabled: true
-    type: nfs
-    server: "192.168.1.10"
-    path: /Media/nzbget
+    # Switched from NFS to a PVC backed by local-path for local k3d clusters
+    type: pvc
+    name: nzbget-pvc
     mountPath: /nzbget
   config:
     enabled: true

@@ -61,6 +61,8 @@ redis:
 
   image:
     pullPolicy: IfNotPresent
+    repository: docker.io/bitnami/redis
+    tag: 6.2.6-debian-10-r97
 
   architecture: standalone
   auth:

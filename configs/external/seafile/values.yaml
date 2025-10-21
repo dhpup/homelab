@@ -79,6 +79,11 @@ mariadb:
       storageClass: local-path
       size: 25Gi
     image:
-      repository: docker.io/library/mariadb
-      tag: 10.5.12
+      repository: docker.io/bitnami/mariadb
+      tag: 10.5.8-debian-10-r0
+      pullPolicy: IfNotPresent
+  memcached:
+    image:
+      repository: docker.io/bitnami/memcached
+      tag: 1.6.14-debian-10-r0
       pullPolicy: IfNotPresent
