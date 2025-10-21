@@ -1,0 +1,197 @@
+kubectl -n sealed-secrets get pods
+kubectl -n sealed-secrets logs -l app.kubernetes.io/name=sealed-secrets --tail=200apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: home-assistant-cm
+data:
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: home-assistant
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: home-assistant
+      app.kubernetes.io/name: home-assistant
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: home-assistant
+        app.kubernetes.io/name: home-assistant
+    spec:
+      automountServiceAccountToken: true
+      hostNetwork: true
+      containers:
+        - image: 'ghcr.io/home-assistant/home-assistant:2025.8.3'
+          imagePullPolicy: IfNotPresent
+          name: home-assistant
+          ports:
+            - containerPort: 8123
+              name: http
+              protocol: TCP
+            - containerPort: 5353
+              name: homekit-udp
+              protocol: UDP
+            - containerPort: 21063
+              name: homekit-tcp
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: home-assistant-cm
+                optional: true
+          volumeMounts:
+          - mountPath: /config
+            name: config
+        - image: ghcr.io/coder/code-server:4.19.0
+          imagePullPolicy: IfNotPresent
+          name: codeserver
+          args:
+            - "--auth"
+            - "none"
+            - "--port"
+            - "12321"
+            - "/config"
+          ports:
+            - containerPort: 12321
+              name: codeserver
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /config
+              name: config
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: home-assistant-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-assistant-lb-tcp
+  annotations:
+    metallb.universe.tf/address-pool: bgp-pool
+    metallb.universe.tf/allow-shared-ip: hass
+spec:
+  selector:
+    app.kubernetes.io/instance: home-assistant
+    app.kubernetes.io/name: home-assistant
+  loadBalancerIP: 172.19.0.3
+  externalTrafficPolicy: Local
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 8123
+    protocol: TCP
+    targetPort: http
+  - name: homekit-tcp
+    port: 21063
+    protocol: TCP
+    targetPort: homekit-tcp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-assistant-lb-udp
+  annotations:
+    metallb.universe.tf/address-pool: bgp-pool
+    metallb.universe.tf/allow-shared-ip: hass
+spec:
+  selector:
+    app.kubernetes.io/instance: home-assistant
+    app.kubernetes.io/name: home-assistant
+  loadBalancerIP: 172.19.0.3
+  externalTrafficPolicy: Local
+  type: LoadBalancer
+  ports:
+  - name: homekit-udp
+    port: 5353
+    protocol: UDP
+    targetPort: homekit-udp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: codeserver
+spec:
+  selector:
+    app.kubernetes.io/instance: home-assistant
+    app.kubernetes.io/name: home-assistant
+  type: ClusterIP
+  ports:
+  - name: codeserver
+    port: 12321
+    protocol: TCP
+    targetPort: codeserver
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: home-assistant-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: selfsigned
+    # external-dns annotations removed (not using ExternalDNS)
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: hass.homelab.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: home-assistant-lb-tcp
+            port:
+              name: http
+  tls:
+  - hosts:
+    - hass.homelab.local
+    secretName: hass.homelab.local-tls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: home-assistant-codeserver-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned
+    nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.0.0/16,172.16.0.0/12"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+  # external-dns annotation removed (not using ExternalDNS)
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: code.hass.homelab.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: codeserver
+            port:
+              name: codeserver
+  tls:
+  - hosts:
+    - code.hass.homelab.local
+    secretName: code.hass.homelab.local-tls
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: home-assistant-config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+  storageClassName: local-path

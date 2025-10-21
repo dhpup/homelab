@@ -59,9 +59,9 @@ ingress:
 persistence:
   shared:
     enabled: true
-    nameOverride: longhorn-rwo
+    nameOverride: local-path-rwo
     type: pvc
-    storageClass: longhorn
+    storageClass: local-path
     accessMode: ReadWriteOnce
     size: 1Ti
 
@@ -75,5 +75,5 @@ mariadb:
   primary:
     persistence:
       enabled: true
-      storageClass: longhorn
+      storageClass: local-path
       size: 25Gi

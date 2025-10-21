@@ -60,14 +60,14 @@ node:
 persistence:
   config:
     enabled: true
-    nameOverride: longhorn-config
-    storageClass: longhorn
+    nameOverride: local-path-config
+    storageClass: local-path
     size: 10Gi
     accessMode: ReadWriteOnce
   data:
     enabled: true
-    nameOverride: longhorn-data
-    storageClass: longhorn
+    nameOverride: local-path-data
+    storageClass: local-path
     size: 30Gi
     accessMode: ReadWriteOnce
   media:

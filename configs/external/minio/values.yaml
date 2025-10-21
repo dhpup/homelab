@@ -1,0 +1,40 @@
+existingSecret: minio-credentials
+replicas: 3
+persistence:
+  storageClass: local-path
+  accessMode: ReadWriteOnce
+  size: 10Gi
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: selfsigned
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+    # external-dns annotations removed (not using ExternalDNS)
+  hosts:
+    - s3.homelab.local
+  tls:
+    - secretName: s3.homelab.local-tls
+      hosts:
+      - s3.homelab.local
+consoleIngress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: selfsigned
+    nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.0.0/16,172.16.0.0/12"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+    # external-dns annotation removed (not using ExternalDNS)
+  hosts:
+    - minio.homelab.local
+  tls:
+    - secretName: minio.homelab.local-tls
+      hosts:
+      - minio.homelab.local
+resources:
+  requests:
+    memory: 4Gi

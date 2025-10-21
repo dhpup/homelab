@@ -40,19 +40,19 @@ persistence:
     mountPath: /usr/src/paperless/consume
   data:
     enabled: true
-    nameOverride: longhorn-data
-    storageClass: longhorn
+    nameOverride: local-path-data
+    storageClass: local-path
     size: 100Gi
   media:
     enabled: true
-    nameOverride: longhorn-media
-    storageClass: longhorn
+    nameOverride: local-path-media
+    storageClass: local-path
     size: 25Gi
     mountPath: /usr/src/paperless/media
   export:
     enabled: true
-    nameOverride: longhorn-export
-    storageClass: longhorn
+    nameOverride: local-path-export
+    storageClass: local-path
     size: 25Gi
     mountPath: /usr/src/paperless/export
 

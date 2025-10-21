@@ -41,7 +41,7 @@ persistence:
     mountPath: /nzbget
   config:
     enabled: true
-    storageClass: longhorn
+    storageClass: local-path
     size: 50Gi
 
 podSecurityContext:

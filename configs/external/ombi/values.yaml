@@ -28,5 +28,5 @@ ingress:
 persistence:
   config:
     enabled: true
-    storageClass: longhorn
+    storageClass: local-path
     size: 5Gi
