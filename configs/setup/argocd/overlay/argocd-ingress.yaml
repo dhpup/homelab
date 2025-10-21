@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"  # Fixes infinite 307 redirects.
     cert-manager.io/cluster-issuer: selfsigned # Generate a letsencrypt cert when cert-manager becomes available
-    nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.0.0/16,172.16.0.0/12,192.168.97.0/24" # Allow k3d network
+    nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.0.0/16,172.16.0.0/12" # Forbid access from external networks
   # external-dns annotation removed (not using ExternalDNS)
 spec:
   ingressClassName: nginx
