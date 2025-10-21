@@ -1,6 +1,6 @@
 image:
   # Use public/community image to avoid private registry requirements in local k3d
-  repository: seafileltd/seafile
+  repository: linuxserver/seafile
   tag: latest
   pullPolicy: IfNotPresent
 
