@@ -9,6 +9,10 @@ env:
   PAPERLESS_CONSUMER_POLLING: 60
   PAPERLESS_REDIS: redis://paperless-redis-headless:6379
   PAPERLESS_DBHOST: paperless-postgres
+  PAPERLESS_DBPORT: "5432"
+  PAPERLESS_DBNAME: paperless
+  PAPERLESS_DBUSER: paperless
+  PAPERLESS_DBPASS: changeme
 
 ingress:
   main:
