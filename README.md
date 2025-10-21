@@ -24,7 +24,7 @@ Applications are divided into ArgoCD projects by their respective types.
 - 🌐 [`k8s-gateway`](https://github.com/ori-edge/k8s_gateway) - CoreDNS controller plugin
 - ⚖️ [`metallb`](https://metallb.universe.tf/) - A loadbalancer for non-cloud deployments
 - 📊 [`metrics-server`](https://github.com/kubernetes-sigs/metrics-server) - Reports resource usage when running `kubectl top`
-- 🚀 [`nginx-ingress`](https://github.com/kubernetes/ingress-nginx) - The ingress controller for the cluster (Official Kubernetes Ingress)
+- 🚀 [`nginx-ingress`](https://github.com/kubernetes/ingress-nginx) - The ingress controller for the cluster (official Kubernetes ingress)
 - 🔐 [`sealed-secrets`](https://github.com/bitnami-labs/sealed-secrets) - A controller for encrypting and decrypting secrets
 
 ### External
@@ -42,7 +42,7 @@ Applications are divided into ArgoCD projects by their respective types.
 
 ## Bootstrapping
 
-ArgoCD needs to be manually bootstrapped before it can self-manage. The only pre-requisite is a Kubernetes cluster with a CNI installed. All other required components will be install after bootstrapping.
+ArgoCD needs to be manually bootstrapped before it can self-manage. The only prerequisite is a Kubernetes cluster with a CNI installed. All other required components will be installed after bootstrapping.
 
 ```bash
 kubectl apply -k configs/setup/argocd/
