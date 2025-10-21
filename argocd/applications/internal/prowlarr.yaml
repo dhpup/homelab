@@ -10,8 +10,8 @@ spec:
       - CreateNamespace=true
   sources:
   - chart: prowlarr
-    repoURL: https://k8s-at-home.com/charts/
-    targetRevision: 4.5.3
+    repoURL: https://bjw-s.github.io/helm-charts
+    targetRevision: 5.4.1
     helm:
       valueFiles:
       - $values/configs/internal/prowlarr/values.yaml
