@@ -6,3 +6,7 @@ auth:
 primary:
   persistence:
     existingClaim: coder-postgres-pvc
+image:
+  repository: docker.io/bitnami/postgresql
+  tag: 15.3.0-debian-11-r6
+  pullPolicy: IfNotPresent

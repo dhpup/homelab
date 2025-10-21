@@ -1,9 +1,10 @@
 image:
-  repository: docker.seadrive.org/seafileltd/seafile-pro-mc
-  tag: 9.0.5
+  # Use public/community image to avoid private registry requirements in local k3d
+  repository: seafileltd/seafile
+  tag: latest
+  pullPolicy: IfNotPresent
 
-imagePullSecrets:
-  - name: image-pull-secret
+imagePullSecrets: []
 
 env:
   SEAFILE_ADMIN_EMAIL: noah@homelab.local
