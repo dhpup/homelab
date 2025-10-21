@@ -17,14 +17,14 @@ ingress:
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
       # external-dns annotation removed (not using ExternalDNS)
     hosts:
-      - host: sonarr.home.homelab.local
+      - host: sonarr.homelab.local
         paths:
         - path: /
           pathType: Prefix
     tls:
-    - secretName: sonarr.home.homelab.local
+    - secretName: sonarr.homelab.local
       hosts:
-      - sonarr.home.homelab.local
+      - sonarr.homelab.local
 
 persistence:
   media:

@@ -16,14 +16,14 @@ ingress:
   # external-dns annotation removed (not using ExternalDNS)
 
     hosts:
-      - host: radarr.home.homelab.local
+      - host: radarr.homelab.local
         paths:
         - path: /
           pathType: Prefix
     tls:
-    - secretName: radarr.home.homelab.local
+    - secretName: radarr.homelab.local
       hosts:
-      - radarr.home.homelab.local
+      - radarr.homelab.local
 
 persistence:
   media:
