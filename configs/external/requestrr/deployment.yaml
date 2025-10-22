@@ -20,11 +20,11 @@ spec:
         image: darkalfx/requestrr:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 5000
+        - containerPort: 4545
           name: http
         env:
         - name: PORT
-          value: "5000"
+          value: "4545"
         - name: BOT_TOKEN
           valueFrom:
             secretKeyRef:
@@ -64,13 +64,13 @@ spec:
         livenessProbe:
           httpGet:
             path: /
-            port: 5000
+            port: 4545
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /
-            port: 5000
+            port: 4545
           initialDelaySeconds: 10
           periodSeconds: 5
       volumes:
