@@ -30,6 +30,7 @@ Applications are divided into ArgoCD projects by their respective types.
 ### External
 
 - 🎬 [`ombi`](https://ombi.io/) - A multimedia request platform for Plex
+- 🤖 [`requestrr`](https://github.com/darkalfx/requestrr) - Discord bot for requesting movies and TV shows with Sonarr, Radarr, and Ombi integration
 
 ### Internal
 
@@ -78,4 +79,43 @@ In addition to the Kubernetes cluster, some services run directly on the Mac via
 - **Plex**: Media server (see `homelab-docker/` directory)
 
 These services connect to the Kubernetes cluster via network bridges and integrate with the *arr stack (Radarr, Sonarr, Prowlarr) for automated media management.
+
+## Requestrr Discord Bot Setup
+
+Requestrr provides a Discord bot interface for requesting movies and TV shows. To set it up:
+
+### 1. Create a Discord Bot
+
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+2. Create a new application
+3. Navigate to "Bot" section and add a bot
+4. Copy the bot token
+
+### 2. Configure API Keys
+
+Get the following API keys from your applications:
+
+- **Ombi API Key**: Log in to Ombi (localhost:5000) → Settings → API → Copy API Key
+- **Sonarr API Key**: Go to Sonarr (localhost:8989) → Settings → General → Copy API Key
+- **Radarr API Key**: Go to Radarr (localhost:7878) → Settings → General → Copy API Key
+
+### 3. Update Requestrr Configuration
+
+Edit `configs/external/requestrr/configmap.yaml` and replace the placeholder values:
+
+```yaml
+"bot_token": "your_discord_bot_token_here",
+"client_id": "your_discord_client_id_here",
+"api_key": "your_api_key_here"  # for ombi, sonarr, and radarr
+```
+
+### 4. Deploy and Access
+
+Once configured, Requestrr will be available at:
+
+```
+http://requestrr.homelab.local
+```
+
+Use Discord commands like `!request movie Title` or `!request show Title` to request content.
 
