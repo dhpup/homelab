@@ -25,6 +25,31 @@ spec:
         env:
         - name: PORT
           value: "5000"
+        - name: BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: requestrr-discord-secrets
+              key: bot_token
+        - name: CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: requestrr-discord-secrets
+              key: client_id
+        - name: OMBI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: requestrr-discord-secrets
+              key: ombi_api_key
+        - name: SONARR_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: requestrr-discord-secrets
+              key: sonarr_api_key
+        - name: RADARR_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: requestrr-discord-secrets
+              key: radarr_api_key
         volumeMounts:
         - name: config
           mountPath: /home/node/app/config

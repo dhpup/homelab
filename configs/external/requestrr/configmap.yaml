@@ -7,23 +7,23 @@ data:
   config.json: |
     {
       "discord": {
-        "bot_token": "CHANGE_ME_TO_YOUR_BOT_TOKEN",
-        "client_id": "CHANGE_ME_TO_YOUR_CLIENT_ID",
+        "bot_token": "${BOT_TOKEN}",
+        "client_id": "${CLIENT_ID}",
         "prefix": "!"
       },
       "ombi": {
         "enabled": true,
         "url": "http://ombi.ombi.svc.cluster.local:5000",
-        "api_key": "CHANGE_ME_TO_YOUR_OMBI_API_KEY"
+        "api_key": "${OMBI_API_KEY}"
       },
       "radarr": {
         "enabled": true,
         "url": "http://radarr.radarr.svc.cluster.local:7878",
-        "api_key": "CHANGE_ME_TO_YOUR_RADARR_API_KEY"
+        "api_key": "${RADARR_API_KEY}"
       },
       "sonarr": {
         "enabled": true,
         "url": "http://sonarr.sonarr.svc.cluster.local:8989",
-        "api_key": "CHANGE_ME_TO_YOUR_SONARR_API_KEY"
+        "api_key": "${SONARR_API_KEY}"
       }
     }
