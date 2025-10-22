@@ -15,41 +15,6 @@ spec:
       labels:
         app: requestrr
     spec:
-      initContainers:
-      - name: config-init
-        image: busybox:latest
-        command: ['sh', '-c', 'cat /config-template/config.json | sed "s/\${BOT_TOKEN}/$BOT_TOKEN/g; s/\${CLIENT_ID}/$CLIENT_ID/g; s/\${OMBI_API_KEY}/$OMBI_API_KEY/g; s/\${SONARR_API_KEY}/$SONARR_API_KEY/g; s/\${RADARR_API_KEY}/$RADARR_API_KEY/g" > /config/config.json']
-        env:
-        - name: BOT_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: requestrr-discord-secrets
-              key: bot_token
-        - name: CLIENT_ID
-          valueFrom:
-            secretKeyRef:
-              name: requestrr-discord-secrets
-              key: client_id
-        - name: OMBI_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: requestrr-discord-secrets
-              key: ombi_api_key
-        - name: SONARR_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: requestrr-discord-secrets
-              key: sonarr_api_key
-        - name: RADARR_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: requestrr-discord-secrets
-              key: radarr_api_key
-        volumeMounts:
-        - name: config-template
-          mountPath: /config-template
-        - name: config
-          mountPath: /config
       containers:
       - name: requestrr
         image: darkalfx/requestrr:latest
@@ -60,33 +25,8 @@ spec:
         env:
         - name: PORT
           value: "4545"
-        - name: BOT_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: requestrr-discord-secrets
-              key: bot_token
-        - name: CLIENT_ID
-          valueFrom:
-            secretKeyRef:
-              name: requestrr-discord-secrets
-              key: client_id
-        - name: OMBI_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: requestrr-discord-secrets
-              key: ombi_api_key
-        - name: SONARR_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: requestrr-discord-secrets
-              key: sonarr_api_key
-        - name: RADARR_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: requestrr-discord-secrets
-              key: radarr_api_key
         volumeMounts:
-        - name: config-template
+        - name: config
           mountPath: /home/node/app/config
           readOnly: true
         resources:
@@ -109,8 +49,6 @@ spec:
           initialDelaySeconds: 10
           periodSeconds: 5
       volumes:
-      - name: config-template
-        configMap:
-          name: requestrr-config
       - name: config
-        emptyDir: {}
+        secret:
+          secretName: requestrr-config-secret
