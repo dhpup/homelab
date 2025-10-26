@@ -69,7 +69,9 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 ## Secrets
 
-All secrets are encrypted and stored in this repository using [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) by Bitnami. Only the sealing key stored on the cluster can decrypt these secrets. If you are using this repository as the basis for your own homelab or Kubernetes cluster, you will need to seal your own secrets and replace the encrypted ones in this repository. As a result, if you try to deploy the applications contained in this repository using my configurations as-is, most applications will not function correctly due to missing secrets.
+Secrets are managed using [Infisical Cloud](https://infisical.com/) and synced into the cluster via [external-secrets](https://external-secrets.io/). The External Secrets Operator fetches secrets from Infisical and creates Kubernetes secrets automatically.
+
+Additionally, some secrets are encrypted and stored in this repository using [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) by Bitnami. Only the sealing key stored on the cluster can decrypt these secrets. If you are using this repository as the basis for your own homelab or Kubernetes cluster, you will need to seal your own secrets and replace the encrypted ones in this repository. As a result, if you try to deploy the applications contained in this repository using my configurations as-is, most applications will not function correctly due to missing secrets.
 
 ## Mac Docker Services
 
