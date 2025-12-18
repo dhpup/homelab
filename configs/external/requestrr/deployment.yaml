@@ -16,17 +16,17 @@ spec:
         app: requestrr
     spec:
       initContainers:
-      # Copy initial config from secret only if config doesn't exist
+      # Copy initial config from secret only if settings.json doesn't exist
       - name: init-config
         image: busybox:latest
         command:
         - sh
         - -c
         - |
-          if [ ! -f /config/config.json ]; then
+          if [ ! -f /config/settings.json ]; then
             echo "First run - copying initial config from secret..."
-            cp /secret-config/config.json /config/config.json
-            chmod 644 /config/config.json
+            cp /secret-config/config.json /config/settings.json
+            chmod 644 /config/settings.json
           else
             echo "Config exists - preserving existing settings"
           fi
@@ -48,7 +48,7 @@ spec:
           value: "4545"
         volumeMounts:
         - name: config-storage
-          mountPath: /home/node/app/config
+          mountPath: /root/config
         resources:
           requests:
             memory: "128Mi"
