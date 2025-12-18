@@ -15,6 +15,27 @@ spec:
       labels:
         app: requestrr
     spec:
+      initContainers:
+      # Copy initial config from secret only if config doesn't exist
+      - name: init-config
+        image: busybox:latest
+        command:
+        - sh
+        - -c
+        - |
+          if [ ! -f /config/config.json ]; then
+            echo "First run - copying initial config from secret..."
+            cp /secret-config/config.json /config/config.json
+            chmod 644 /config/config.json
+          else
+            echo "Config exists - preserving existing settings"
+          fi
+        volumeMounts:
+        - name: config-storage
+          mountPath: /config
+        - name: config-secret
+          mountPath: /secret-config
+          readOnly: true
       containers:
       - name: requestrr
         image: darkalfx/requestrr:latest
@@ -26,9 +47,8 @@ spec:
         - name: PORT
           value: "4545"
         volumeMounts:
-        - name: config
+        - name: config-storage
           mountPath: /home/node/app/config
-          readOnly: true
         resources:
           requests:
             memory: "128Mi"
@@ -49,6 +69,9 @@ spec:
           initialDelaySeconds: 10
           periodSeconds: 5
       volumes:
-      - name: config
+      - name: config-storage
+        persistentVolumeClaim:
+          claimName: requestrr-config
+      - name: config-secret
         secret:
           secretName: requestrr-config-secret
