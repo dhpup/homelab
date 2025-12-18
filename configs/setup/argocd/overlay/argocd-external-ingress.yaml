@@ -6,7 +6,7 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"  # Fixes infinite 307 redirects.
-    cert-manager.io/cluster-issuer: selfsigned # Generate a letsencrypt cert when cert-manager becomes available
+    cert-manager.io/cluster-issuer: mkcert # Generate a letsencrypt cert when cert-manager becomes available
   # external-dns annotations removed (not using ExternalDNS)
 spec:
   ingressClassName: nginx
