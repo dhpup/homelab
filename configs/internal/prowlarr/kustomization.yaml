@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: prowlarr
 
 resources:
+  - pvc.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml
