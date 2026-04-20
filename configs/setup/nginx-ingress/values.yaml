@@ -1,0 +1,15 @@
+controller:
+  kind: DaemonSet
+
+  publishService:
+    enabled: true
+
+  service:
+    annotations:
+      metallb.universe.tf/address-pool: bgp-pool
+    loadBalancerIP: 172.19.0.0
+    externalTrafficPolicy: Local
+
+  ingressClassResource:
+    enabled: true
+    default: true

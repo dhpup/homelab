@@ -9,10 +9,17 @@ spec:
     automated: {}
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
   sources:
+  - chart: ingress-nginx
+    repoURL: https://kubernetes.github.io/ingress-nginx
+    targetRevision: 4.15.1
+    helm:
+      valueFiles:
+      - $values/configs/setup/nginx-ingress/values.yaml
   - repoURL: https://github.com/dhpup/homelab.git
     targetRevision: main
-    path: configs/setup/nginx-ingress
+    ref: values
   destination:
     name: in-cluster
     namespace: ingress-nginx
