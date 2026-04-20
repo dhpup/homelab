@@ -1,0 +1,26 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: homelab
+servers: 1
+agents: 3
+# To upgrade k3s: update this image tag and run:
+#   k3d cluster delete homelab
+#   k3d cluster create --config k3d-config.yaml
+# Back up PVC data first — see README.md (Cluster Recovery section)
+image: rancher/k3s:v1.33.4-k3s1
+ports:
+  - port: 80:80
+    nodeFilters:
+      - loadbalancer
+  - port: 443:443
+    nodeFilters:
+      - loadbalancer
+  # API server — randomise on recreate by omitting HostPort (or pin if preferred)
+  - port: 60070:6443
+    nodeFilters:
+      - loadbalancer
+volumes:
+  - volume: /Users/daneko/homelab-storage:/homelab-storage
+    nodeFilters:
+      - all
