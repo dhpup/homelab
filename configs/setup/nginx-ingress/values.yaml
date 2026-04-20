@@ -1,6 +1,9 @@
 controller:
   kind: DaemonSet
 
+  admissionWebhooks:
+    enabled: false
+
   publishService:
     enabled: true
 
