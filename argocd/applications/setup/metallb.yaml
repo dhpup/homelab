@@ -9,10 +9,11 @@ spec:
     automated: {}
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
   sources:
   - chart: metallb
     repoURL: https://metallb.github.io/metallb
-    targetRevision: 0.13.7
+    targetRevision: 0.15.3
   - repoURL: https://github.com/dhpup/homelab.git
     targetRevision: main
     path: configs/setup/metallb
