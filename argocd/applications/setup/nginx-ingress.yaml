@@ -15,6 +15,7 @@ spec:
     repoURL: https://kubernetes.github.io/ingress-nginx
     targetRevision: 4.15.1
     helm:
+      releaseName: ingress-nginx
       valueFiles:
       - $values/configs/setup/nginx-ingress/values.yaml
   - repoURL: https://github.com/dhpup/homelab.git
