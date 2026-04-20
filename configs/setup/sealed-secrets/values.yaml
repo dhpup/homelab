@@ -1,0 +1,3 @@
+# Sealed Secrets controller Helm values
+# Release name is set to "sealed-secrets-controller" in the ArgoCD app
+# so the service name matches what kubeseal expects by default.
