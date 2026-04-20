@@ -7,7 +7,19 @@ spec:
   sourceRepos:
   - '*'
   destinations:
-  - namespace: '*'
+  - namespace: bazarr
+    server: '*'
+  - namespace: nzbget
+    server: '*'
+  - namespace: prowlarr
+    server: '*'
+  - namespace: radarr
+    server: '*'
+  - namespace: sonarr
+    server: '*'
+  - namespace: sealed-secrets-ui
+    server: '*'
+  - namespace: tdarr
     server: '*'
   clusterResourceWhitelist:
   - group: '*'

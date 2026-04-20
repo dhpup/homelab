@@ -7,7 +7,9 @@ spec:
   sourceRepos:
   - '*'
   destinations:
-  - namespace: '*'
+  - namespace: ombi
+    server: '*'
+  - namespace: requestrr
     server: '*'
   clusterResourceWhitelist:
   - group: '*'

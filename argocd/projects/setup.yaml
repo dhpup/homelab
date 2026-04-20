@@ -7,7 +7,19 @@ spec:
   sourceRepos:
   - '*'
   destinations:
-  - namespace: '*'
+  - namespace: argocd
+    server: '*'
+  - namespace: cert-manager
+    server: '*'
+  - namespace: external-secrets
+    server: '*'
+  - namespace: k8s-gateway
+    server: '*'
+  - namespace: metallb-system
+    server: '*'
+  - namespace: ingress-nginx
+    server: '*'
+  - namespace: kube-system
     server: '*'
   clusterResourceWhitelist:
   - group: '*'
