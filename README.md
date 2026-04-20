@@ -1,123 +1,148 @@
-# Self-Managing Kubernetes Homelab w/ ArgoCD
+# Self-Managing Kubernetes Homelab with ArgoCD
 
-Applications are divided into ArgoCD projects by their respective types.
+A local homelab Kubernetes cluster managed with ArgoCD using the [app-of-apps pattern](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/).
 
-- `setup` - Required base components used to operate the cluster and deployments.
-  - ArgoCD Application Definitions: `argocd/applications/setup`
-  - Configurations: `configs/setup/`
-- `external` - Externally facing applications.
-  - ArgoCD Application Definitions: `argocd/applications/external`
-  - Configurations: `configs/external/`
-- `internal` - Internal-only applications.
-  - ArgoCD Application Definitions: `argocd/applications/internal`
-  - Configurations: `configs/internal/`
+## Repository Layout
+
+```
+argocd/
+  app-of-apps.yaml          # root application — discovers everything under argocd/
+  applications/
+    setup/                  # ArgoCD Application CRs for platform services
+    external/               # ArgoCD Application CRs for externally-facing apps
+    internal/               # ArgoCD Application CRs for internal services
+  projects/                 # ArgoCD AppProject definitions with namespace scoping
+configs/
+  setup/                    # Helm values and manifests for platform services
+  external/                 # Helm values and manifests for external apps
+  internal/                 # Helm values and manifests for internal apps
+scripts/
+  k3d-healthcheck.sh        # Cluster health check and flannel IP drift recovery
+```
+
+## ArgoCD Model
+
+`app-of-apps` recursively discovers all manifests under `argocd/` and manages them automatically. ArgoCD `Application` CRs live in the `argocd` namespace; workloads deploy into their own isolated namespaces.
+
+Each project is scoped to its expected namespaces:
+
+| Project | Namespaces |
+|---------|------------|
+| `setup` | `argocd`, `cert-manager`, `external-secrets`, `k8s-gateway`, `metallb-system`, `ingress-nginx`, `kube-system` |
+| `external` | `ombi`, `requestrr` |
+| `internal` | `bazarr`, `nzbget`, `prowlarr`, `radarr`, `sonarr`, `sealed-secrets-ui`, `tdarr` |
 
 ## Applications
 
-🔄 [`app-of-apps`](argocd/app-of-apps.yaml)
-
 ### Setup
 
-- 🔵 [`argocd`](https://argoproj.github.io/cd/) - The GitOps operator responsible for managing the cluster
-- 🔐 [`cert-manager`](https://cert-manager.io/) - Automatic SSL certificate generation using self-signed certificates
-- 🔒 [`external-secrets`](https://external-secrets.io/) - Sync secrets from external secret management systems
-- 🌐 [`k8s-gateway`](https://github.com/ori-edge/k8s_gateway) - CoreDNS controller plugin
-- ⚖️ [`metallb`](https://metallb.universe.tf/) - A loadbalancer for non-cloud deployments
-- 📊 [`metrics-server`](https://github.com/kubernetes-sigs/metrics-server) - Reports resource usage when running `kubectl top`
-- 🚀 [`nginx-ingress`](https://github.com/kubernetes/ingress-nginx) - The ingress controller for the cluster (official Kubernetes ingress)
-- 🔐 [`sealed-secrets`](https://github.com/bitnami-labs/sealed-secrets) - A controller for encrypting and decrypting secrets
+| App | Description |
+|-----|-------------|
+| [argocd](https://argoproj.github.io/cd/) | GitOps controller — self-manages from this repo |
+| [cert-manager](https://cert-manager.io/) | TLS certificates via mkcert (self-signed CA) |
+| [external-secrets](https://external-secrets.io/) | Syncs secrets from Infisical Cloud into Kubernetes |
+| [k8s-gateway](https://github.com/ori-edge/k8s_gateway) | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
+| [metallb](https://metallb.universe.tf/) | Bare-metal load balancer (BGP mode) |
+| [nginx-ingress](https://github.com/kubernetes/ingress-nginx) | Ingress controller (DaemonSet) |
+| [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) | Encrypts secrets for safe storage in Git |
 
 ### External
 
-- 🎬 [`ombi`](https://ombi.io/) - A multimedia request platform for Plex
-- 🤖 [`requestrr`](https://github.com/darkalfx/requestrr) - Discord bot for requesting movies and TV shows with Sonarr, Radarr, and Ombi integration
+| App | Description |
+|-----|-------------|
+| [ombi](https://ombi.io/) | Media request portal |
+| [requestrr](https://github.com/darkalfx/requestrr) | Discord bot for requesting movies and TV shows |
 
 ### Internal
 
-- ⬇️ [`nzbget`](https://nzbget.net/) - A Usenet download platform
-- 🔍 [`prowlarr`](https://prowlarr.com/) - An indexer manager for the *arr stack
-- 🎥 [`radarr`](https://radarr.video/) - Automatically search, download, and manage movies
-- 📺 [`sonarr`](https://sonarr.tv/) - Automatically search, download, and manage television series
-- 🔐 [`sealed-secrets-ui`](https://github.com/komodor-io/sealed-secrets-ui) - Web UI for managing sealed secrets
-- ⚙️ [`tdarr`](https://tdarr.io/) - An automatic multimedia transcoder
-- 📝 [`bazarr`](https://www.bazarr.media/) - Automatically search, download, and manage subtitles
+| App | Description |
+|-----|-------------|
+| [bazarr](https://www.bazarr.media/) | Automatic subtitle management |
+| [nzbget](https://nzbget.net/) | Usenet download client |
+| [prowlarr](https://prowlarr.com/) | Indexer manager for the \*arr stack |
+| [radarr](https://radarr.video/) | Movie library automation |
+| [sonarr](https://sonarr.tv/) | TV series library automation |
+| [sealed-secrets-ui](https://github.com/komodor-io/sealed-secrets-ui) | Web UI for sealing secrets |
+| [tdarr](https://tdarr.io/) | Automated media transcoding |
 
 ## Bootstrapping
 
-ArgoCD needs to be manually bootstrapped before it can self-manage. The only prerequisite is a Kubernetes cluster with a CNI installed. All other required components will be installed after bootstrapping.
+Prerequisite: a running Kubernetes cluster with a CNI.
 
 ```bash
+# Deploy ArgoCD
 kubectl apply -k configs/setup/argocd/
+
+# Deploy the root app-of-apps — ArgoCD will take over from here
 kubectl apply -f argocd/app-of-apps.yaml -n argocd
 ```
 
-The above commands will deploy ArgoCD and the `app-of-apps` application which will be used to discover and deploy all other applications out of this repository. From this point forward, ArgoCD will also self-manage. Any updates to `configs/setup/argocd/` will be automatically discovered and applied.
+All other applications are deployed automatically. Changes pushed to `main` are reconciled on the next ArgoCD sync cycle.
 
-## Accessing ArgoCD
+## Accessing Services
 
-Once bootstrapped, ArgoCD is available at:
+All ingress endpoints use HTTPS with mkcert-issued certificates.
 
-```
-https://argocd.homelab.local
-```
+| Service | URL |
+|---------|-----|
+| ArgoCD | `https://argocd.homelab.local` |
+| Requestrr | `https://requestrr.homelab.local` |
+| Ombi | `https://ombi.homelab.local` |
+| Sonarr | `https://sonarr.homelab.local` |
+| Radarr | `https://radarr.homelab.local` |
+| Bazarr | `https://bazarr.homelab.local` |
+| NZBGet | `https://nzbget.homelab.local` |
+| Prowlarr | `https://prowlarr.homelab.local` |
+| Tdarr | `https://tdarr.homelab.local` |
+| Sealed Secrets UI | `https://secrets.homelab.local` |
 
-The initial admin password can be retrieved with:
+Initial ArgoCD admin password:
 
 ```bash
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 ```
 
+## DNS Setup (macOS)
+
+`k8s-gateway` resolves `*.homelab.local` dynamically from Ingress and Service resources. Configure macOS to use it:
+
+```bash
+# Create domain-specific resolver
+sudo mkdir -p /etc/resolver
+sudo tee /etc/resolver/homelab.local <<'EOF'
+nameserver 192.168.97.2
+nameserver 192.168.97.3
+nameserver 192.168.97.5
+nameserver 192.168.97.6
+EOF
+
+# Flush resolver cache
+sudo dscacheutil -flushcache
+sudo killall -HUP mDNSResponder
+```
+
+Do **not** add `*.homelab.local` entries to `/etc/hosts` — they will take precedence over the resolver and bypass k8s-gateway. Reserve `/etc/hosts` overrides only for intentionally static LAN services (e.g. `plex.homelab.local`, `qbittorrent.homelab.local`).
+
 ## Secrets
 
-Secrets are managed using [Infisical Cloud](https://infisical.com/) and synced into the cluster via [external-secrets](https://external-secrets.io/). The External Secrets Operator fetches secrets from Infisical and creates Kubernetes secrets automatically.
+Two systems manage secrets:
 
-Additionally, some secrets are encrypted and stored in this repository using [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) by Bitnami. Only the sealing key stored on the cluster can decrypt these secrets. If you are using this repository as the basis for your own homelab or Kubernetes cluster, you will need to seal your own secrets and replace the encrypted ones in this repository. As a result, if you try to deploy the applications contained in this repository using my configurations as-is, most applications will not function correctly due to missing secrets.
+- **[External Secrets Operator](https://external-secrets.io/)** + **[Infisical Cloud](https://infisical.com/)** — fetches secrets at runtime and creates Kubernetes `Secret` objects. Secrets refresh every 15 minutes.
+- **[Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets)** — encrypts secrets with the cluster's sealing key so they can be committed to Git safely.
 
-## Mac Docker Services
+> If you fork this repository, you will need to provision your own Infisical secrets and re-seal any Sealed Secret resources with your own cluster key.
 
-In addition to the Kubernetes cluster, some services run directly on the Mac via Docker for better performance and hardware access:
+## Requestrr
 
-- **qBittorrent**: Torrent download client (see `homelab-docker/` directory)
-- **Plex**: Media server (see `homelab-docker/` directory)
+Requestrr's `settings.json` is seeded from an ExternalSecret on first startup. After initialization, the persisted config on the PVC is the source of truth. See [REQUESTRR_USAGE.md](REQUESTRR_USAGE.md) for full details.
 
-These services connect to the Kubernetes cluster via network bridges and integrate with the *arr stack (Radarr, Sonarr, Prowlarr) for automated media management.
+## Cluster Recovery
 
-## Requestrr Discord Bot Setup
+If the k3d cluster is restarted and nodes lose connectivity (flannel IP drift, stale taints, etc.), run:
 
-Requestrr provides a Discord bot interface for requesting movies and TV shows. To set it up:
-
-### 1. Create a Discord Bot
-
-1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Create a new application
-3. Navigate to "Bot" section and add a bot
-4. Copy the bot token
-
-### 2. Configure API Keys
-
-Get the following API keys from your applications:
-
-- **Ombi API Key**: Log in to Ombi (localhost:5000) → Settings → API → Copy API Key
-- **Sonarr API Key**: Go to Sonarr (localhost:8989) → Settings → General → Copy API Key
-- **Radarr API Key**: Go to Radarr (localhost:7878) → Settings → General → Copy API Key
-
-### 3. Update Requestrr Configuration
-
-Edit `configs/external/requestrr/configmap.yaml` and replace the placeholder values:
-
-```yaml
-"bot_token": "your_discord_bot_token_here",
-"client_id": "your_discord_client_id_here",
-"api_key": "your_api_key_here"  # for ombi, sonarr, and radarr
+```bash
+bash scripts/k3d-healthcheck.sh
 ```
 
-### 4. Deploy and Access
-
-Once configured, Requestrr will be available at:
-
-```
-http://requestrr.homelab.local
-```
-
-Use Discord commands like `!request movie Title` or `!request show Title` to request content.
+This script detects and corrects flannel annotation mismatches and verifies node readiness.
 
