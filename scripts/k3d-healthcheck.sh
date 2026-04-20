@@ -86,6 +86,52 @@ get_notready_nodes() {
     kubectl get nodes --no-headers 2>/dev/null | grep "NotReady" | awk '{print $1}'
 }
 
+# Function to fix flannel public-ip annotations after IP drift
+# After a machine restart, Docker may assign different IPs to containers.
+# Flannel stores the node's public-ip in an annotation; if it doesn't match
+# the container's actual IP, flannel crashes with:
+#   "failed to find interface with specified node ip"
+fix_flannel_ip_annotations() {
+    log "Checking for flannel IP annotation drift..."
+    local fixed=0
+
+    for container in $(docker ps -a --filter "name=k3d-${CLUSTER_NAME}" --filter "name=server\|agent" --format "{{.Names}}" | grep -E 'server|agent'); do
+        # Get the container's actual Docker network IP
+        local actual_ip
+        actual_ip=$(docker inspect "$container" --format "{{(index .NetworkSettings.Networks \"k3d-${CLUSTER_NAME}\").IPAddress}}" 2>/dev/null)
+        if [ -z "$actual_ip" ]; then
+            continue
+        fi
+
+        # The node name in k8s matches the container name
+        local node_name="$container"
+
+        # Get the flannel public-ip annotation
+        local flannel_ip
+        flannel_ip=$(kubectl get node "$node_name" -o jsonpath='{.metadata.annotations.flannel\.alpha\.coreos\.com/public-ip}' 2>/dev/null)
+        if [ -z "$flannel_ip" ]; then
+            continue
+        fi
+
+        if [ "$actual_ip" != "$flannel_ip" ]; then
+            log "IP drift detected: $node_name has Docker IP $actual_ip but flannel annotation says $flannel_ip"
+            kubectl annotate node "$node_name" "flannel.alpha.coreos.com/public-ip=$actual_ip" --overwrite 2>/dev/null
+            if [ $? -eq 0 ]; then
+                log "Updated flannel annotation for $node_name to $actual_ip"
+                fixed=$((fixed + 1))
+            else
+                log "ERROR: Failed to update flannel annotation for $node_name"
+            fi
+        fi
+    done
+
+    if [ "$fixed" -gt 0 ]; then
+        log "Fixed $fixed flannel annotation(s)"
+        return 0
+    fi
+    return 1
+}
+
 # Function to restart agent containers (fixes NotReady nodes after power outage)
 # Retries up to 3 times, restarting only the NotReady agents each time
 restart_agent_containers() {
@@ -99,6 +145,9 @@ restart_agent_containers() {
             log "All nodes are Ready"
             return 0
         fi
+
+        # Fix flannel annotations before restarting (the actual root cause of most failures)
+        fix_flannel_ip_annotations
         
         log "Attempt $attempt: Restarting NotReady agents: $notready_nodes"
         
@@ -129,6 +178,11 @@ restart_cluster() {
     sleep 5
     k3d cluster start "$CLUSTER_NAME"
     sleep $WAIT_TIME
+    
+    # After restart, Docker may reassign IPs - fix flannel annotations
+    if check_cluster_health; then
+        fix_flannel_ip_annotations
+    fi
     
     # After k3d cluster start, agents sometimes don't start properly - restart them
     if ! check_nodes_ready; then
@@ -202,12 +256,36 @@ if [ "$stopped_containers" -gt 0 ]; then
     fi
 fi
 
-# STEP 3: Check for restart loops or NotReady nodes - requires full restart
+# STEP 3: Fix flannel IP drift (most common cause of post-restart failures)
+# Docker doesn't guarantee stable IPs across restarts, but flannel/k3s stores
+# the node IP in annotations. Fix the annotations before any restart attempts.
+if check_cluster_health; then
+    if fix_flannel_ip_annotations; then
+        log "Fixed flannel IP drift, restarting affected containers..."
+        # Restart containers in restart loops (they're crashing because of the IP mismatch)
+        docker ps -a --filter "name=k3d-${CLUSTER_NAME}" --format "{{.Names}} {{.Status}}" | grep "Restarting" | awk '{print $1}' | while read -r container; do
+            log "Restarting crash-looping container: $container"
+            docker restart "$container" 2>/dev/null
+        done
+        # Also restart NotReady agents
+        get_notready_nodes | while read -r node; do
+            log "Restarting NotReady node: $node"
+            docker restart "$node" 2>/dev/null
+        done
+        sleep 30
+        if full_health_check; then
+            log "Cluster recovered by fixing flannel IP annotations"
+            exit 0
+        fi
+    fi
+fi
+
+# STEP 3b: Check for restart loops or NotReady nodes
 if check_container_restart_loop; then
     log "Detected container in restart loop"
 fi
 
-# STEP 3b: If API is up but nodes are NotReady, try restarting agents first (faster than full restart)
+# STEP 3c: If API is up but nodes are NotReady, try restarting agents (faster than full restart)
 if check_cluster_health && ! check_nodes_ready; then
     log "Detected NotReady nodes - trying agent restart first"
     restart_agent_containers
