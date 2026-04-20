@@ -9,9 +9,9 @@ spec:
     syncOptions:
       - CreateNamespace=true
   sources:
-  - chart: sonarr
-    repoURL: https://k8s-at-home.com/charts/
-    targetRevision: 16.2.3
+  - chart: app-template
+    repoURL: https://bjw-s-labs.github.io/helm-charts
+    targetRevision: 4.6.2
     helm:
       valueFiles:
       - $values/configs/internal/sonarr/values.yaml

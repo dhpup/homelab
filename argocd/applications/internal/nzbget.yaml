@@ -9,9 +9,9 @@ spec:
     syncOptions:
       - CreateNamespace=true
   sources:
-  - chart: nzbget
-    repoURL: https://k8s-at-home.com/charts/
-    targetRevision: 12.3.2
+  - chart: app-template
+    repoURL: https://bjw-s-labs.github.io/helm-charts
+    targetRevision: 4.6.2
     helm:
       valueFiles:
       - $values/configs/internal/nzbget/values.yaml

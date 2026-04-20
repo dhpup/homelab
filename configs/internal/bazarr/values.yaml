@@ -1,41 +1,50 @@
-image:
-  pullPolicy: IfNotPresent
-  repository: ghcr.io/onedr0p/bazarr
-  tag: 1.4.2
+defaultPodOptions:
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
+    fsGroup: 0
 
-env:
-  TZ: America/Toronto
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/onedr0p/bazarr
+          tag: 1.4.2
+          pullPolicy: IfNotPresent
+        env:
+          TZ: America/Toronto
+
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 6767
 
 ingress:
   main:
-    enabled: true
-    ingressClassName: nginx
+    className: nginx
     annotations:
       cert-manager.io/cluster-issuer: mkcert
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-      # external-dns annotation removed (not using ExternalDNS)
     hosts:
       - host: bazarr.homelab.local
         paths:
-        - path: /
-          pathType: Prefix
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: main
+              port: http
     tls:
-    - secretName: bazarr.homelab.local
-      hosts:
-      - bazarr.homelab.local
+      - secretName: bazarr.homelab.local
+        hosts:
+          - bazarr.homelab.local
 
 persistence:
-  media:
-    enabled: true
-    enabled: false
   config:
-    enabled: true
-    storageClass: local-path
-    size: 50Gi
-
-podSecurityContext:
-  runAsUser: 0
-  runAsGroup: 0
-  fsGroup: 0
+    existingClaim: bazarr-config
+    globalMounts:
+      - path: /config

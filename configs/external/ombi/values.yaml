@@ -1,32 +1,51 @@
-image:
-  pullPolicy: IfNotPresent
+defaultPodOptions:
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
+    fsGroup: 0
 
-env:
-  TZ: America/Toronto
-  PGID: 0
-  PUID: 0
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/linuxserver/ombi
+          tag: 4.16.12
+          pullPolicy: IfNotPresent
+        env:
+          TZ: America/Toronto
+          PUID: "0"
+          PGID: "0"
+
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 5000
 
 ingress:
   main:
-    enabled: true
-    ingressClassName: nginx
+    className: nginx
     annotations:
       cert-manager.io/cluster-issuer: mkcert
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  # external-dns annotations removed (not using ExternalDNS)
     hosts:
       - host: ombi.homelab.local
         paths:
-        - path: /
-          pathType: Prefix
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: main
+              port: http
     tls:
-    - secretName: ombi.homelab.local
-      hosts:
-      - ombi.homelab.local
+      - secretName: ombi.homelab.local
+        hosts:
+          - ombi.homelab.local
 
 persistence:
   config:
-    enabled: true
-    storageClass: local-path
-    size: 5Gi
+    existingClaim: ombi-config
+    globalMounts:
+      - path: /config

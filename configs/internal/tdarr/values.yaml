@@ -1,88 +1,107 @@
-env:
-  TZ: America/Toronto
-  PUID: 0
-  PGUID: 0
-  THREADS_WORKER_INIT_TIMEOUT: 200000
+defaultPodOptions:
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
+    fsGroup: 0
 
-image:
-  tag: 2.13.01
-  repository: haveagitgat/tdarr
+controllers:
+  main:
+    initContainers:
+      skip-chown:
+        image:
+          repository: busybox
+          tag: 1.28
+        command: ['sh', '-c', "touch /firstRun"]
+    containers:
+      server:
+        image:
+          repository: haveagitgat/tdarr
+          tag: 2.13.01
+          pullPolicy: IfNotPresent
+        env:
+          TZ: America/Toronto
+          PUID: "0"
+          PGUID: "0"
+          THREADS_WORKER_INIT_TIMEOUT: "200000"
+          serverIP: 0.0.0.0
+          serverPort: "8266"
+        probes:
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: 8265
+              initialDelaySeconds: 0
+              timeoutSeconds: 5
+              periodSeconds: 2
+              failureThreshold: 2000
+      node:
+        image:
+          repository: haveagitgat/tdarr_node
+          tag: 2.13.01
+          pullPolicy: IfNotPresent
+        env:
+          TZ: America/Toronto
+          PUID: "0"
+          PGUID: "0"
+          THREADS_WORKER_INIT_TIMEOUT: "200000"
+          nodeID: k8s-node
+          serverIP: 127.0.0.1
+          serverPort: "8266"
+        resources:
+          limits:
+            cpu: 4
+            memory: 4Gi
+          requests:
+            cpu: 1m
+            memory: 1Mi
 
 service:
+  main:
+    controller: main
+    primary: true
+    ports:
+      http:
+        port: 8265
   server:
-    enabled: true
+    controller: main
     type: LoadBalancer
     annotations:
       metallb.universe.tf/address-pool: bgp-pool
-      coredns.io/hostname: server.tdarr.homelab.local
     externalTrafficPolicy: Local
     ports:
-      controller-lb:
-        enabled: true
+      controller:
         port: 8266
-        nodePort: 8266
-        targetPort: 8266
         protocol: TCP
 
 ingress:
   main:
-    enabled: true
-    ingressClassName: nginx
+    className: nginx
     annotations:
       cert-manager.io/cluster-issuer: mkcert
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      # external-dns annotation removed (not using ExternalDNS)
     hosts:
       - host: tdarr.homelab.local
         paths:
-        - path: /
-          pathType: Prefix
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: main
+              port: http
     tls:
-    - secretName: tdarr.homelab.local
-      hosts:
-      - tdarr.homelab.local
-
-node:
-  enabled: true
-  id: k8s-node
-  image:
-    tag: 2.13.01
-  resources:
-    limits:
-      cpu: 4
-      memory: 4Gi
-    requests:
-      cpu: 1m
-      memory: 1Mi
+      - secretName: tdarr.homelab.local
+        hosts:
+          - tdarr.homelab.local
 
 persistence:
   config:
-    enabled: true
-    nameOverride: local-path-config
-    storageClass: local-path
-    size: 10Gi
-    accessMode: ReadWriteOnce
+    existingClaim: tdarr-local-path-config
+    globalMounts:
+      - path: /app/configs
   data:
-    enabled: true
-    nameOverride: local-path-data
-    storageClass: local-path
-    size: 30Gi
-    accessMode: ReadWriteOnce
-  media:
-    enabled: false
-
-podSecurityContext:
-  runAsUser: 0
-  runAsGroup: 0
-  fsGroup: 0
-
-probes:
-  startup:
-    spec:
-      failureThreshold: 2000
-
-initContainers:
-  skip-chown:
-    image: busybox:1.28
-    command: ['sh', '-c', "touch /firstRun"]
+    existingClaim: tdarr-local-path-data
+    globalMounts:
+      - path: /app/server

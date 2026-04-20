@@ -1,59 +1,66 @@
-image:
-  pullPolicy: IfNotPresent
-  repository: ghcr.io/onedr0p/sonarr
-  tag: 3.0.10.1567
+defaultPodOptions:
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
+    fsGroup: 0
 
-env:
-  TZ: America/Toronto
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/onedr0p/sonarr
+          tag: 3.0.10.1567
+          pullPolicy: IfNotPresent
+        env:
+          TZ: America/Toronto
+
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 8989
 
 ingress:
   main:
-    enabled: true
-    ingressClassName: nginx
+    className: nginx
     annotations:
       cert-manager.io/cluster-issuer: mkcert
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-      # external-dns annotation removed (not using ExternalDNS)
     hosts:
       - host: sonarr.homelab.local
         paths:
-        - path: /
-          pathType: Prefix
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: main
+              port: http
     tls:
-    - secretName: sonarr.homelab.local
-      hosts:
-      - sonarr.homelab.local
+      - secretName: sonarr.homelab.local
+        hosts:
+          - sonarr.homelab.local
 
 persistence:
+  config:
+    existingClaim: sonarr-config
+    globalMounts:
+      - path: /config
   media:
-    enabled: true
     type: hostPath
     hostPath: /homelab-storage/tv
     hostPathType: Directory
-    mountPath: /tv
+    globalMounts:
+      - path: /tv
   downloads:
-    enabled: true
     type: hostPath
     hostPath: /homelab-storage/downloads
     hostPathType: Directory
-    mountPath: /homelab-storage/downloads
+    globalMounts:
+      - path: /homelab-storage/downloads
   nzbget:
-    enabled: true
-    # Switched from NFS to a PVC backed by local-path for local k3d clusters
-    type: pvc
-    name: nzbget-pvc
-    accessMode: ReadWriteOnce
-    mountPath: /nzbget
-    storageClass: local-path
-    size: 50Gi
-  config:
-    enabled: true
-    storageClass: local-path
-    size: 50Gi
-
-podSecurityContext:
-  runAsUser: 0
-  runAsGroup: 0
-  fsGroup: 0
+    existingClaim: sonarr-nzbget
+    globalMounts:
+      - path: /nzbget

@@ -1,58 +1,66 @@
-image:
-  pullPolicy: IfNotPresent
+defaultPodOptions:
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
+    fsGroup: 0
 
-env:
-  TZ: America/Toronto
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/k8s-at-home/radarr
+          tag: v4.1.0.6175
+          pullPolicy: IfNotPresent
+        env:
+          TZ: America/Toronto
+
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 7878
 
 ingress:
   main:
-    enabled: true
-    ingressClassName: nginx
+    className: nginx
     annotations:
       cert-manager.io/cluster-issuer: mkcert
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/proxy-body-size: 1024m
-  # external-dns annotation removed (not using ExternalDNS)
-
     hosts:
       - host: radarr.homelab.local
         paths:
-        - path: /
-          pathType: Prefix
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: main
+              port: http
     tls:
-    - secretName: radarr.homelab.local
-      hosts:
-      - radarr.homelab.local
+      - secretName: radarr.homelab.local
+        hosts:
+          - radarr.homelab.local
 
 persistence:
+  config:
+    existingClaim: radarr-config
+    globalMounts:
+      - path: /config
   media:
-    enabled: true
     type: hostPath
     hostPath: /homelab-storage/movies
     hostPathType: Directory
-    mountPath: /movies
+    globalMounts:
+      - path: /movies
   downloads:
-    enabled: true
     type: hostPath
     hostPath: /homelab-storage/downloads
     hostPathType: Directory
-    mountPath: /homelab-storage/downloads
+    globalMounts:
+      - path: /homelab-storage/downloads
   nzbget:
-    enabled: true
-    # Switched from NFS to a PVC backed by local-path for local k3d clusters
-    type: pvc
-    name: nzbget-pvc
-    accessMode: ReadWriteOnce
-    mountPath: /nzbget
-    storageClass: local-path
-    size: 50Gi
-  config:
-    enabled: true
-    storageClass: local-path
-    size: 50Gi
-
-podSecurityContext:
-  runAsUser: 0
-  runAsGroup: 0
-  fsGroup: 0
+    existingClaim: radarr-nzbget
+    globalMounts:
+      - path: /nzbget
