@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: prowlarr
-        image: lscr.io/linuxserver/prowlarr:latest
+        image: lscr.io/linuxserver/prowlarr:2.3.5.5327-ls142
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
