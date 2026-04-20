@@ -45,6 +45,9 @@ ingress:
 
 persistence:
   config:
-    existingClaim: nzbget-config
+    type: persistentVolumeClaim
+    storageClass: local-path
+    accessMode: ReadWriteOnce
+    size: 5Gi
     globalMounts:
       - path: /config

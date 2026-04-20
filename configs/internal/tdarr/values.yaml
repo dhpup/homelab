@@ -98,10 +98,16 @@ ingress:
 
 persistence:
   config:
-    existingClaim: tdarr-local-path-config
+    type: persistentVolumeClaim
+    storageClass: local-path
+    accessMode: ReadWriteOnce
+    size: 10Gi
     globalMounts:
       - path: /app/configs
   data:
-    existingClaim: tdarr-local-path-data
+    type: persistentVolumeClaim
+    storageClass: local-path
+    accessMode: ReadWriteOnce
+    size: 30Gi
     globalMounts:
       - path: /app/server

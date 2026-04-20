@@ -45,6 +45,9 @@ ingress:
 
 persistence:
   config:
-    existingClaim: bazarr-config
+    type: persistentVolumeClaim
+    storageClass: local-path
+    accessMode: ReadWriteOnce
+    size: 50Gi
     globalMounts:
       - path: /config

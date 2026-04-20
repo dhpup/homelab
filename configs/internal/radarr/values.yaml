@@ -45,7 +45,10 @@ ingress:
 
 persistence:
   config:
-    existingClaim: radarr-config
+    type: persistentVolumeClaim
+    storageClass: local-path
+    accessMode: ReadWriteOnce
+    size: 50Gi
     globalMounts:
       - path: /config
   media:
@@ -61,6 +64,9 @@ persistence:
     globalMounts:
       - path: /homelab-storage/downloads
   nzbget:
-    existingClaim: radarr-nzbget
+    type: persistentVolumeClaim
+    storageClass: local-path
+    accessMode: ReadWriteOnce
+    size: 50Gi
     globalMounts:
       - path: /nzbget
