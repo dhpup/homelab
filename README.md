@@ -39,10 +39,10 @@ Each project is scoped to its expected namespaces:
 | App | Description |
 |-----|-------------|
 | [argocd](https://argoproj.github.io/cd/) | GitOps controller — self-manages from this repo |
-| [cert-manager](https://cert-manager.io/) | TLS certificates via mkcert (self-signed CA) |
-| [external-secrets](https://external-secrets.io/) | Syncs secrets from Infisical Cloud into Kubernetes |
+| [cert-manager](https://cert-manager.io/) v1.20.2 | TLS certificates via mkcert (self-signed CA) |
+| [external-secrets](https://external-secrets.io/) v2.3.0 | Syncs secrets from Infisical Cloud into Kubernetes |
 | [k8s-gateway](https://github.com/ori-edge/k8s_gateway) | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
-| [metallb](https://metallb.universe.tf/) | Bare-metal load balancer (BGP mode) |
+| [metallb](https://metallb.universe.tf/) v0.15.3 | Bare-metal load balancer (BGP mode) |
 | [nginx-ingress](https://github.com/kubernetes/ingress-nginx) | Ingress controller (DaemonSet) |
 | [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) | Encrypts secrets for safe storage in Git |
 
@@ -60,8 +60,8 @@ Each project is scoped to its expected namespaces:
 | [bazarr](https://www.bazarr.media/) | Automatic subtitle management |
 | [nzbget](https://nzbget.net/) | Usenet download client |
 | [prowlarr](https://prowlarr.com/) | Indexer manager for the \*arr stack |
-| [radarr](https://radarr.video/) | Movie library automation |
-| [sonarr](https://sonarr.tv/) | TV series library automation |
+| [radarr](https://radarr.video/) v6 | Movie library automation |
+| [sonarr](https://sonarr.tv/) v4 | TV series library automation |
 | [sealed-secrets-ui](https://github.com/komodor-io/sealed-secrets-ui) | Web UI for sealing secrets |
 | [tdarr](https://tdarr.io/) | Automated media transcoding |
 
@@ -104,24 +104,19 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 ## DNS Setup (macOS)
 
-`k8s-gateway` resolves `*.homelab.local` dynamically from Ingress and Service resources. Configure macOS to use it:
+`k8s-gateway` resolves `*.homelab.local` dynamically from Ingress and Service resources. However, macOS `/etc/resolver` does not support custom DNS ports, and k8s-gateway's LoadBalancer IP is not directly routable from macOS on k3d.
+
+Instead, add `/etc/hosts` entries pointing each `*.homelab.local` hostname to the k3d load balancer container IP (find it with `docker network inspect k3d-homelab`), which proxies ports 80/443 into the cluster. After editing:
 
 ```bash
-# Create domain-specific resolver
-sudo mkdir -p /etc/resolver
-sudo tee /etc/resolver/homelab.local <<'EOF'
-nameserver 192.168.97.2
-nameserver 192.168.97.3
-nameserver 192.168.97.5
-nameserver 192.168.97.6
-EOF
-
-# Flush resolver cache
-sudo dscacheutil -flushcache
-sudo killall -HUP mDNSResponder
+sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder
 ```
 
-Do **not** add `*.homelab.local` entries to `/etc/hosts` — they will take precedence over the resolver and bypass k8s-gateway. Reserve `/etc/hosts` overrides only for intentionally static LAN services (e.g. `plex.homelab.local`, `qbittorrent.homelab.local`).
+To query k8s-gateway directly for DNS debugging (find the NodePort with `kubectl get svc -n k8s-gateway k8s-gateway`):
+
+```bash
+dig @<k3d-server-node-ip> -p <nodeport> argocd.homelab.local +short
+```
 
 ## Secrets
 
