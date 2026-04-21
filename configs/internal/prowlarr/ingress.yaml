@@ -4,11 +4,8 @@ metadata:
   name: prowlarr
   annotations:
     cert-manager.io/cluster-issuer: mkcert
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
   - host: prowlarr.homelab.local
     http:

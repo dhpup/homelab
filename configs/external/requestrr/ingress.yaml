@@ -5,10 +5,8 @@ metadata:
   namespace: requestrr
   annotations:
     cert-manager.io/cluster-issuer: mkcert
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
   - host: requestrr.homelab.local
     http:

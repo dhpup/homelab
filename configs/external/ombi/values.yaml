@@ -26,11 +26,9 @@ service:
 
 ingress:
   main:
-    className: nginx
+    className: traefik
     annotations:
       cert-manager.io/cluster-issuer: mkcert
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
     hosts:
       - host: ombi.homelab.local
         paths:

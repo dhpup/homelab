@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: nginx-ingress
+  name: traefik
   namespace: argocd
 spec:
   project: setup
@@ -11,16 +11,16 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true
   sources:
-  - chart: ingress-nginx
-    repoURL: https://kubernetes.github.io/ingress-nginx
-    targetRevision: 4.15.1
+  - chart: traefik
+    repoURL: https://traefik.github.io/charts
+    targetRevision: 39.0.8
     helm:
-      releaseName: ingress-nginx
+      releaseName: traefik
       valueFiles:
-      - $values/configs/setup/nginx-ingress/values.yaml
+      - $values/configs/setup/traefik/values.yaml
   - repoURL: https://github.com/dhpup/homelab.git
     targetRevision: main
     ref: values
   destination:
     name: in-cluster
-    namespace: ingress-nginx
+    namespace: traefik

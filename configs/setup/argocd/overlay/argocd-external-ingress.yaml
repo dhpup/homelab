@@ -1,34 +1,15 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
 metadata:
   name: argocd-external-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"  # Fixes infinite 307 redirects.
-    cert-manager.io/cluster-issuer: mkcert # Generate a letsencrypt cert when cert-manager becomes available
-  # external-dns annotations removed (not using ExternalDNS)
+  namespace: argocd
 spec:
-  ingressClassName: nginx
-  rules:
-  - host: api.homelab.local
-    http:
-      paths:
-      - path: /api/webhook
-        pathType: Exact
-        backend:
-          service:
-            name: argocd-server
-            port: 
-              name: https
-      - path: /api/badge
-        pathType: Exact
-        backend:
-          service:
-            name: argocd-server
-            port: 
-              name: https
+  entryPoints:
+    - websecure
+  routes:
+  - match: HostSNI(`api.homelab.local`)
+    services:
+    - name: argocd-server
+      port: 443
   tls:
-  - hosts:
-    - api.homelab.local
-    secretName: api.homelab.local-tls
+    passthrough: true
