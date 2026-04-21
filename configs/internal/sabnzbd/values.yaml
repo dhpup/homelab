@@ -48,6 +48,7 @@ persistence:
     storageClass: local-path
     accessMode: ReadWriteOnce
     size: 5Gi
+    retain: true
     globalMounts:
       - path: /config
   downloads:
