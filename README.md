@@ -30,7 +30,7 @@ Each project is scoped to its expected namespaces:
 |---------|------------|
 | `setup` | `argocd`, `cert-manager`, `external-secrets`, `k8s-gateway`, `metallb-system`, `traefik` |
 | `external` | `ombi`, `requestrr` |
-| `internal` | `bazarr`, `prowlarr`, `radarr`, `sabnzbd`, `sonarr`, `tdarr` |
+| `internal` | `bazarr`, `prowlarr`, `radarr`, `sonarr`, `tdarr` |
 
 ## Applications
 
@@ -58,10 +58,9 @@ Each project is scoped to its expected namespaces:
 | App | Description |
 |-----|-------------|
 | [bazarr](https://www.bazarr.media/) | Automatic subtitle management |
-| [prowlarr](https://prowlarr.com/) | Indexer manager for the \*arr stack |
-| [radarr](https://radarr.video/) v6 | Movie library automation |
-| [sabnzbd](https://sabnzbd.org/) v4.5.5 | Usenet download client |
-| [sonarr](https://sonarr.tv/) v4 | TV series library automation |
+| [prowlarr](https://prowlarr.com/) | Indexer manager — syncs indexers to Radarr and Sonarr |
+| [radarr](https://radarr.video/) v6 | Movie library automation (root: `/homelab-storage/movies`) |
+| [sonarr](https://sonarr.tv/) v4 | TV series library automation (root: `/homelab-storage/tv`) |
 | [tdarr](https://tdarr.io/) | Automated media transcoding |
 
 ## Bootstrapping
@@ -91,7 +90,6 @@ All ingress endpoints use HTTPS with mkcert-issued certificates.
 | Radarr | `https://radarr.homelab.local` |
 | Bazarr | `https://bazarr.homelab.local` |
 | Prowlarr | `https://prowlarr.homelab.local` |
-| SABnzbd | `https://sabnzbd.homelab.local` |
 | Tdarr | `https://tdarr.homelab.local` |
 
 Initial ArgoCD admin password:

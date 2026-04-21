@@ -36,8 +36,8 @@ Requestrr configuration is managed by External Secrets — there is no ConfigMap
 | `discord_bot_token` | Bot authentication |
 | `discord_client_id` | OAuth2 invite link |
 | `ombi_api_key` | Request forwarding |
-| `sonarr_api_key` | TV show automation |
-| `radarr_api_key` | Movie automation |
+| `sonarr_api_key` | TV show automation — must match Sonarr's current API key |
+| `radarr_api_key` | Movie automation — must match Radarr's current API key |
 
 Secrets sync every 15 minutes.
 
