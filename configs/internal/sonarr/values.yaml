@@ -60,10 +60,4 @@ persistence:
     hostPathType: Directory
     globalMounts:
       - path: /homelab-storage/downloads
-  nzbget:
-    type: persistentVolumeClaim
-    storageClass: local-path
-    accessMode: ReadWriteOnce
-    size: 50Gi
-    globalMounts:
-      - path: /nzbget
+

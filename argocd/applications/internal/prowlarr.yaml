@@ -8,10 +8,16 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
-  source:
-    repoURL: https://github.com/dhpup/homelab.git
+  sources:
+  - chart: app-template
+    repoURL: https://bjw-s-labs.github.io/helm-charts
+    targetRevision: 4.6.2
+    helm:
+      valueFiles:
+      - $values/configs/internal/prowlarr/values.yaml
+  - repoURL: https://github.com/dhpup/homelab.git
     targetRevision: main
-    path: configs/internal/prowlarr
+    ref: values
   destination:
     name: in-cluster
     namespace: prowlarr

@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: nzbget
+  name: sabnzbd
   namespace: argocd
 spec:
   project: internal
@@ -14,11 +14,10 @@ spec:
     targetRevision: 4.6.2
     helm:
       valueFiles:
-      - $values/configs/internal/nzbget/values.yaml
+      - $values/configs/internal/sabnzbd/values.yaml
   - repoURL: https://github.com/dhpup/homelab.git
     targetRevision: main
     ref: values
   destination:
     name: in-cluster
-    namespace: nzbget
-
+    namespace: sabnzbd

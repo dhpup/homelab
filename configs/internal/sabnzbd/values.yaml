@@ -9,18 +9,20 @@ controllers:
     containers:
       main:
         image:
-          repository: ghcr.io/home-operations/radarr
-          tag: 6.2.0.10390
+          repository: lscr.io/linuxserver/sabnzbd
+          tag: latest
           pullPolicy: IfNotPresent
         env:
           TZ: America/Toronto
+          PUID: "0"
+          PGID: "0"
 
 service:
   main:
     controller: main
     ports:
       http:
-        port: 7878
+        port: 8080
 
 ingress:
   main:
@@ -28,7 +30,7 @@ ingress:
     annotations:
       cert-manager.io/cluster-issuer: mkcert
     hosts:
-      - host: radarr.homelab.local
+      - host: sabnzbd.homelab.local
         paths:
           - path: /
             pathType: Prefix
@@ -36,28 +38,21 @@ ingress:
               identifier: main
               port: http
     tls:
-      - secretName: radarr.homelab.local
+      - secretName: sabnzbd.homelab.local
         hosts:
-          - radarr.homelab.local
+          - sabnzbd.homelab.local
 
 persistence:
   config:
     type: persistentVolumeClaim
     storageClass: local-path
     accessMode: ReadWriteOnce
-    size: 50Gi
+    size: 5Gi
     globalMounts:
       - path: /config
-  media:
-    type: hostPath
-    hostPath: /homelab-storage/movies
-    hostPathType: Directory
-    globalMounts:
-      - path: /movies
   downloads:
     type: hostPath
     hostPath: /homelab-storage/downloads
     hostPathType: Directory
     globalMounts:
       - path: /homelab-storage/downloads
-
