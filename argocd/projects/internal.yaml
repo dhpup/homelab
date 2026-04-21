@@ -9,15 +9,13 @@ spec:
   destinations:
   - namespace: bazarr
     server: '*'
-  - namespace: nzbget
-    server: '*'
   - namespace: prowlarr
     server: '*'
   - namespace: radarr
     server: '*'
-  - namespace: sonarr
+  - namespace: sabnzbd
     server: '*'
-  - namespace: sealed-secrets-ui
+  - namespace: sonarr
     server: '*'
   - namespace: tdarr
     server: '*'
