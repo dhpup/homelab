@@ -14,6 +14,11 @@ log() {
     echo "[$(date)] $1" | tee -a "$LOG_FILE"
 }
 
+# Rotate log: keep last 500 lines to prevent unbounded growth
+if [ -f "$LOG_FILE" ]; then
+    tail -n 500 "$LOG_FILE" > "${LOG_FILE}.tmp" && mv "${LOG_FILE}.tmp" "$LOG_FILE"
+fi
+
 log "Checking k3d cluster health..."
 
 # Ensure we're using the correct kubectl context
@@ -58,12 +63,6 @@ check_nodes_ready() {
     return 0
 }
 
-# Function to check if any server container is in restart loop
-check_container_restart_loop() {
-    docker ps --format "{{.Names}} {{.Status}}" | grep "k3d-${CLUSTER_NAME}" | grep -q "Restarting"
-    return $?
-}
-
 # Function to start stopped load balancer
 start_loadbalancer() {
     log "Load balancer is stopped. Starting it..."
@@ -95,7 +94,7 @@ fix_flannel_ip_annotations() {
     log "Checking for flannel IP annotation drift..."
     local fixed=0
 
-    for container in $(docker ps -a --filter "name=k3d-${CLUSTER_NAME}" --filter "name=server\|agent" --format "{{.Names}}" | grep -E 'server|agent'); do
+    for container in $(docker ps -a --filter "name=k3d-${CLUSTER_NAME}" --format "{{.Names}}" | grep -E 'server|agent'); do
         # Get the container's actual Docker network IP
         local actual_ip
         actual_ip=$(docker inspect "$container" --format "{{(index .NetworkSettings.Networks \"k3d-${CLUSTER_NAME}\").IPAddress}}" 2>/dev/null)
@@ -220,7 +219,7 @@ if ! check_docker; then
 fi
 
 # Check if cluster exists
-if ! k3d cluster list 2>/dev/null | grep -q "^$CLUSTER_NAME"; then
+if ! k3d cluster get "$CLUSTER_NAME" &>/dev/null; then
     log "ERROR: Cluster '$CLUSTER_NAME' not found"
     exit 1
 fi
@@ -280,12 +279,7 @@ if check_cluster_health; then
     fi
 fi
 
-# STEP 3b: Check for restart loops or NotReady nodes
-if check_container_restart_loop; then
-    log "Detected container in restart loop"
-fi
-
-# STEP 3c: If API is up but nodes are NotReady, try restarting agents (faster than full restart)
+# STEP 3b: If API is up but nodes are NotReady, try restarting agents (faster than full restart)
 if check_cluster_health && ! check_nodes_ready; then
     log "Detected NotReady nodes - trying agent restart first"
     restart_agent_containers
