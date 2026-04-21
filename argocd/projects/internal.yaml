@@ -13,8 +13,6 @@ spec:
     server: '*'
   - namespace: radarr
     server: '*'
-  - namespace: sabnzbd
-    server: '*'
   - namespace: sonarr
     server: '*'
   - namespace: tdarr
