@@ -7,9 +7,8 @@ ingressClass:
 
 service:
   annotations:
-    metallb.universe.tf/address-pool: bgp-pool
+    metallb.universe.tf/loadBalancerIPs: "172.19.0.0"
   spec:
-    loadBalancerIP: "172.19.0.0"
     externalTrafficPolicy: Local
 
 ports:
