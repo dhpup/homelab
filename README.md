@@ -28,9 +28,9 @@ Each project is scoped to its expected namespaces:
 
 | Project | Namespaces |
 |---------|------------|
-| `setup` | `argocd`, `cert-manager`, `external-secrets`, `k8s-gateway`, `metallb-system`, `ingress-nginx`, `kube-system` |
+| `setup` | `argocd`, `cert-manager`, `external-secrets`, `k8s-gateway`, `metallb-system`, `traefik` |
 | `external` | `ombi`, `requestrr` |
-| `internal` | `bazarr`, `nzbget`, `prowlarr`, `radarr`, `sonarr`, `sealed-secrets-ui`, `tdarr` |
+| `internal` | `bazarr`, `prowlarr`, `radarr`, `sabnzbd`, `sonarr`, `tdarr` |
 
 ## Applications
 
@@ -38,13 +38,13 @@ Each project is scoped to its expected namespaces:
 
 | App | Description |
 |-----|-------------|
-| [argocd](https://argoproj.github.io/cd/) | GitOps controller — self-manages from this repo |
-| [cert-manager](https://cert-manager.io/) v1.20.2 | TLS certificates via mkcert (self-signed CA) |
+| [argocd](https://argoproj.github.io/cd/) v3.3.7 | GitOps controller — self-manages from this repo |
+| [cert-manager](https://cert-manager.io/) v1.20.2 | TLS certificates via mkcert (self-signed CA) and Let's Encrypt |
 | [external-secrets](https://external-secrets.io/) v2.3.0 | Syncs secrets from Infisical Cloud into Kubernetes |
-| [k8s-gateway](https://github.com/ori-edge/k8s_gateway) | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
-| [metallb](https://metallb.universe.tf/) v0.15.3 | Bare-metal load balancer (BGP mode) |
-| [nginx-ingress](https://github.com/kubernetes/ingress-nginx) | Ingress controller (DaemonSet) |
-| [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) | Encrypts secrets for safe storage in Git |
+| [k8s-gateway](https://github.com/ori-edge/k8s_gateway) v2.4.0 | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
+| [metallb](https://metallb.universe.tf/) v0.15.3 | Bare-metal load balancer (BGP mode, IP `172.19.0.0`) |
+| [traefik](https://traefik.io/) v3.6 | Ingress controller (DaemonSet), default IngressClass, HTTP→HTTPS redirect |
+| [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) v2.18.5 | Encrypts secrets for safe storage in Git |
 
 ### External
 
@@ -58,11 +58,10 @@ Each project is scoped to its expected namespaces:
 | App | Description |
 |-----|-------------|
 | [bazarr](https://www.bazarr.media/) | Automatic subtitle management |
-| [nzbget](https://nzbget.net/) | Usenet download client |
 | [prowlarr](https://prowlarr.com/) | Indexer manager for the \*arr stack |
 | [radarr](https://radarr.video/) v6 | Movie library automation |
+| [sabnzbd](https://sabnzbd.org/) v4.5.5 | Usenet download client |
 | [sonarr](https://sonarr.tv/) v4 | TV series library automation |
-| [sealed-secrets-ui](https://github.com/komodor-io/sealed-secrets-ui) | Web UI for sealing secrets |
 | [tdarr](https://tdarr.io/) | Automated media transcoding |
 
 ## Bootstrapping
@@ -86,15 +85,14 @@ All ingress endpoints use HTTPS with mkcert-issued certificates.
 | Service | URL |
 |---------|-----|
 | ArgoCD | `https://argocd.homelab.local` |
-| Requestrr | `https://requestrr.homelab.local` |
 | Ombi | `https://ombi.homelab.local` |
+| Requestrr | `https://requestrr.homelab.local` |
 | Sonarr | `https://sonarr.homelab.local` |
 | Radarr | `https://radarr.homelab.local` |
 | Bazarr | `https://bazarr.homelab.local` |
-| NZBGet | `https://nzbget.homelab.local` |
 | Prowlarr | `https://prowlarr.homelab.local` |
+| SABnzbd | `https://sabnzbd.homelab.local` |
 | Tdarr | `https://tdarr.homelab.local` |
-| Sealed Secrets UI | `https://secrets.homelab.local` |
 
 Initial ArgoCD admin password:
 
@@ -106,7 +104,7 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 `k8s-gateway` resolves `*.homelab.local` dynamically from Ingress and Service resources. However, macOS `/etc/resolver` does not support custom DNS ports, and k8s-gateway's LoadBalancer IP is not directly routable from macOS on k3d.
 
-Instead, add `/etc/hosts` entries pointing each `*.homelab.local` hostname to the k3d load balancer container IP (find it with `docker network inspect k3d-homelab`), which proxies ports 80/443 into the cluster. After editing:
+Instead, add `/etc/hosts` entries pointing each `*.homelab.local` hostname to the k3d serverlb container IP (`192.168.97.4`), which proxies ports 80/443 into the cluster via Traefik. After editing:
 
 ```bash
 sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder
