@@ -10,7 +10,7 @@ controllers:
       main:
         image:
           repository: lscr.io/linuxserver/sabnzbd
-          tag: latest
+          tag: 4.5.5-ls249
           pullPolicy: IfNotPresent
         env:
           TZ: America/Toronto
