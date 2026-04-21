@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argocd-server-tls
+spec:
+  secretName: argocd-server-tls
+  issuerRef:
+    name: mkcert
+    kind: ClusterIssuer
+  dnsNames:
+    - argocd.homelab.local
+    - api.homelab.local
