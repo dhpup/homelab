@@ -60,5 +60,5 @@ persistence:
     hostPath: /homelab-storage/downloads
     hostPathType: Directory
     globalMounts:
-      - path: /homelab-storage/downloads
+      - path: /downloads
 
