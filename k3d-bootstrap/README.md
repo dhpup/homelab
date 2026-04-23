@@ -41,14 +41,15 @@ This will back up all of:
 
 | PVC | Namespace | Contents |
 |-----|-----------|----------|
-| `nzbget-config` | nzbget | NZBGet settings, queue |
-| `radarr-config` | radarr | Radarr DB + config |
-| `sonarr-config` | sonarr | Sonarr DB + config |
-| `bazarr-config` | bazarr | Bazarr DB + config |
-| `prowlarr-config` | prowlarr | Prowlarr DB + config |
-| `tdarr-local-path-config` | tdarr | Tdarr config |
-| `tdarr-local-path-data` | tdarr | Tdarr data |
-| `seerr-config` | seerr | Seerr DB + config |
+| `radarr` | radarr | Radarr DB + config |
+| `sonarr` | sonarr | Sonarr DB + config |
+| `bazarr` | bazarr | Bazarr DB + config |
+| `prowlarr` | prowlarr | Prowlarr DB + config |
+| `tdarr-config` | tdarr | Tdarr config |
+| `tdarr-data` | tdarr | Tdarr data |
+| `seerr` | seerr | Seerr DB + config |
+
+> **Orphaned PVCs**: `ombi` (namespace `ombi`) and `requestrr-config` (namespace `requestrr`) still exist from decommissioned apps. These do not need to be restored — you can delete them with `kubectl delete pvc -n ombi ombi` and `kubectl delete pvc -n requestrr requestrr-config`.
 
 ---
 
@@ -102,7 +103,7 @@ kubectl rollout status deploy/argocd-server -n argocd --timeout=5m
 kubectl apply -f argocd/app-of-apps.yaml
 ```
 
-ArgoCD will pick up all applications and begin syncing. Setup apps (cert-manager, metallb, nginx-ingress, etc.) have `automated: {}` and will sync without intervention.
+ArgoCD will pick up all applications and begin syncing. Setup apps (cert-manager, metallb, traefik, etc.) have `automated: {}` and will sync without intervention.
 
 ---
 
