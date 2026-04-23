@@ -48,8 +48,7 @@ This will back up all of:
 | `prowlarr-config` | prowlarr | Prowlarr DB + config |
 | `tdarr-local-path-config` | tdarr | Tdarr config |
 | `tdarr-local-path-data` | tdarr | Tdarr data |
-| `ombi-config` | ombi | Ombi DB + config |
-| `requestrr-config` | requestrr | Seeded from ExternalSecret — backup optional |
+| `seerr-config` | seerr | Seerr DB + config |
 
 ---
 

@@ -29,7 +29,7 @@ Each project is scoped to its expected namespaces:
 | Project | Namespaces |
 |---------|------------|
 | `setup` | `argocd`, `cert-manager`, `external-secrets`, `k8s-gateway`, `metallb-system`, `traefik` |
-| `external` | `ombi`, `requestrr` |
+| `external` | `seerr`, `doplarr` |
 | `internal` | `bazarr`, `prowlarr`, `radarr`, `sonarr`, `tdarr` |
 
 ## Applications
@@ -50,8 +50,8 @@ Each project is scoped to its expected namespaces:
 
 | App | Description |
 |-----|-------------|
-| [ombi](https://ombi.io/) | Media request portal |
-| [requestrr](https://github.com/darkalfx/requestrr) | Discord bot for requesting movies and TV shows |
+| [seerr](https://seerr.dev/) | Media request portal and discovery (Overseerr/Jellyseerr successor) |
+| [doplarr](https://github.com/kiranshila/Doplarr) | Discord slash-command bot for requesting movies and TV shows via Seerr |
 
 ### Internal
 
@@ -84,8 +84,7 @@ All ingress endpoints use HTTPS with mkcert-issued certificates.
 | Service | URL |
 |---------|-----|
 | ArgoCD | `https://argocd.homelab.local` |
-| Ombi | `https://ombi.homelab.local` |
-| Requestrr | `https://requestrr.homelab.local` |
+| Seerr | `https://seerr.homelab.local` |
 | Sonarr | `https://sonarr.homelab.local` |
 | Radarr | `https://radarr.homelab.local` |
 | Bazarr | `https://bazarr.homelab.local` |
@@ -123,9 +122,9 @@ Two systems manage secrets:
 
 > If you fork this repository, you will need to provision your own Infisical secrets and re-seal any Sealed Secret resources with your own cluster key.
 
-## Requestrr
+## Doplarr
 
-Requestrr's `settings.json` is seeded from an ExternalSecret on first startup. After initialization, the persisted config on the PVC is the source of truth. See [REQUESTRR_USAGE.md](REQUESTRR_USAGE.md) for full details.
+Doplarr is a Discord slash-command bot that forwards requests to Seerr via Discord slash commands (`/request`). It has no web UI — configuration is entirely via environment variables in the deployment. Users must have their Discord ID linked in Seerr (Users → Edit → Discord ID) for requests to be attributed correctly.
 
 ## Cluster Recovery
 
