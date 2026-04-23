@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doplarr
+  namespace: doplarr
+  labels:
+    app: doplarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: doplarr
+  template:
+    metadata:
+      labels:
+        app: doplarr
+    spec:
+      containers:
+      - name: doplarr
+        image: ghcr.io/kiranshila/doplarr:v3.7.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: OVERSEERR__URL
+          value: "http://seerr.seerr.svc.cluster.local:5055"
+        envFrom:
+        - secretRef:
+            name: doplarr-secret
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"

@@ -1,0 +1,52 @@
+defaultPodOptions:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/seerr-team/seerr
+          tag: latest
+          pullPolicy: IfNotPresent
+        env:
+          TZ: America/Toronto
+          LOG_LEVEL: info
+
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 5055
+
+ingress:
+  main:
+    className: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: mkcert
+    hosts:
+      - host: seerr.homelab.local
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: main
+              port: http
+    tls:
+      - secretName: seerr.homelab.local
+        hosts:
+          - seerr.homelab.local
+
+persistence:
+  config:
+    type: persistentVolumeClaim
+    storageClass: local-path
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    retain: true
+    globalMounts:
+      - path: /app/config
