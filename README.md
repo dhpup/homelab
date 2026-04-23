@@ -38,7 +38,7 @@ Each project is scoped to its expected namespaces:
 
 | App | Description |
 |-----|-------------|
-| [argocd](https://argoproj.github.io/cd/) v3.3.7 | GitOps controller — self-manages from this repo |
+| [argocd](https://argoproj.github.io/cd/) v3.3.8 | GitOps controller — self-manages from this repo |
 | [cert-manager](https://cert-manager.io/) v1.20.2 | TLS certificates via mkcert (self-signed CA) and Let's Encrypt |
 | [external-secrets](https://external-secrets.io/) v2.3.0 | Syncs secrets from Infisical Cloud into Kubernetes |
 | [k8s-gateway](https://github.com/ori-edge/k8s_gateway) v2.4.0 | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
