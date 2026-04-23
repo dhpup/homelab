@@ -11,6 +11,10 @@ spec:
     server: '*'
   - namespace: requestrr
     server: '*'
+  - namespace: seerr
+    server: '*'
+  - namespace: doplarr
+    server: '*'
   clusterResourceWhitelist:
   - group: '*'
     kind: '*'
