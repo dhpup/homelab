@@ -17,6 +17,8 @@ spec:
     server: '*'
   - namespace: tdarr
     server: '*'
+  - namespace: maintainerr
+    server: '*'
   - namespace: unpackerr
     server: '*'
   clusterResourceWhitelist:
