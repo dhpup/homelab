@@ -30,7 +30,7 @@ Each project is scoped to its expected namespaces:
 |---------|------------|
 | `setup` | `argocd`, `cert-manager`, `external-secrets`, `k8s-gateway`, `metallb-system`, `traefik` |
 | `external` | `seerr`, `doplarr` |
-| `internal` | `bazarr`, `prowlarr`, `radarr`, `sonarr`, `tdarr` |
+| `internal` | `bazarr`, `maintainerr`, `prowlarr`, `radarr`, `sonarr`, `tdarr`, `unpackerr` |
 
 ## Applications
 
@@ -58,10 +58,12 @@ Each project is scoped to its expected namespaces:
 | App | Description |
 |-----|-------------|
 | [bazarr](https://www.bazarr.media/) | Automatic subtitle management |
+| [maintainerr](https://github.com/Maintainerr/Maintainerr) | Rule-based media cleanup and rotation for Plex/Jellyfin libraries |
 | [prowlarr](https://prowlarr.com/) | Indexer manager — syncs indexers to Radarr and Sonarr |
 | [radarr](https://radarr.video/) v6 | Movie library automation (root: `/homelab-storage/movies`) |
 | [sonarr](https://sonarr.tv/) v4 | TV series library automation (root: `/homelab-storage/tv`) |
 | [tdarr](https://tdarr.io/) | Automated media transcoding |
+| [unpackerr](https://github.com/unpackerr/unpackerr) | Unpacks completed downloads and notifies Radarr/Sonarr |
 
 ## Bootstrapping
 
@@ -85,6 +87,7 @@ All ingress endpoints use HTTPS with mkcert-issued certificates.
 |---------|-----|
 | ArgoCD | `https://argocd.homelab.local` |
 | Seerr | `https://seerr.homelab.local` |
+| Maintainerr | `https://maintainerr.homelab.local` |
 | Sonarr | `https://sonarr.homelab.local` |
 | Radarr | `https://radarr.homelab.local` |
 | Bazarr | `https://bazarr.homelab.local` |
