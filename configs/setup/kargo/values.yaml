@@ -1,0 +1,26 @@
+api:
+  host: kargo.homelab.local
+
+  secret:
+    name: kargo-admin-secret
+
+  adminAccount:
+    enabled: true
+
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: mkcert
+    tls:
+      enabled: true
+      selfSignedCert: false
+
+  argocd:
+    urls:
+      "": https://argocd.homelab.local
+
+controller:
+  argocd:
+    integrationEnabled: true
+    namespace: argocd

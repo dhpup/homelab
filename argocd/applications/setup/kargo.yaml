@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kargo
+  namespace: argocd
+spec:
+  project: setup
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+  sources:
+  - repoURL: ghcr.io/akuity/kargo-charts
+    chart: kargo
+    targetRevision: 1.10.5
+    helm:
+      valueFiles:
+      - $values/configs/setup/kargo/values.yaml
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    ref: values
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    path: configs/setup/kargo/configs
+  destination:
+    name: in-cluster
+    namespace: kargo

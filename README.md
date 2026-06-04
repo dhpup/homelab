@@ -28,7 +28,7 @@ Each project is scoped to its expected namespaces:
 
 | Project | Namespaces |
 |---------|------------|
-| `setup` | `argocd`, `cert-manager`, `external-secrets`, `k8s-gateway`, `metallb-system`, `traefik` |
+| `setup` | `argocd`, `cert-manager`, `external-secrets`, `kargo`, `k8s-gateway`, `metallb-system`, `traefik` |
 | `external` | `seerr`, `doplarr` |
 | `internal` | `bazarr`, `maintainerr`, `prowlarr`, `radarr`, `sonarr`, `tdarr`, `unpackerr` |
 
@@ -41,6 +41,7 @@ Each project is scoped to its expected namespaces:
 | [argocd](https://argoproj.github.io/cd/) v3.3.8 | GitOps controller — self-manages from this repo |
 | [cert-manager](https://cert-manager.io/) v1.20.2 | TLS certificates via mkcert (self-signed CA) and Let's Encrypt |
 | [external-secrets](https://external-secrets.io/) v2.3.0 | Syncs secrets from Infisical Cloud into Kubernetes |
+| [kargo](https://kargo.io/) v1.10.5 | Progressive delivery and promotion orchestration |
 | [k8s-gateway](https://github.com/ori-edge/k8s_gateway) v2.4.0 | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
 | [metallb](https://metallb.universe.tf/) v0.15.3 | Bare-metal load balancer (BGP mode, IP `172.19.0.0`) |
 | [traefik](https://traefik.io/) v3.6 | Ingress controller (DaemonSet), default IngressClass, HTTP→HTTPS redirect |
@@ -86,6 +87,7 @@ All ingress endpoints use HTTPS with mkcert-issued certificates.
 | Service | URL |
 |---------|-----|
 | ArgoCD | `https://argocd.homelab.local` |
+| Kargo | `https://kargo.homelab.local` |
 | Seerr | `https://seerr.homelab.local` |
 | Maintainerr | `https://maintainerr.homelab.local` |
 | Sonarr | `https://sonarr.homelab.local` |
