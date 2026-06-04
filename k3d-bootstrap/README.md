@@ -10,7 +10,7 @@ This folder contains the cluster configuration for the `homelab` k3d cluster.
 
 | Role | Count | Image |
 |------|-------|-------|
-| Server | 1 | `rancher/k3s:v1.33.4-k3s1` (see `k3d-config.yaml`) |
+| Server | 1 | `rancher/k3s:v1.35.3-k3s1` (see `k3d-config.yaml`) |
 | Agent | 3 | same |
 
 Host mounts:
@@ -20,36 +20,74 @@ PVC data (app configs, databases) lives at `/var/lib/rancher/k3s/storage/` **ins
 
 ---
 
-## Step 1 — Back up PVC data
+## Pre-delete checklist
 
-Run this before deleting the cluster. It copies every PVC directory from the server container to your host:
+Run through this before deleting the cluster. Each item covers something that lives only in the cluster and is not recoverable from Git or Infisical.
 
-```bash
-BACKUP_DIR="/Users/daneko/homelab-storage/pvc-backup/$(date +%Y%m%d-%H%M%S)"
-mkdir -p "$BACKUP_DIR"
-
-for pvc_dir in $(docker exec k3d-homelab-server-0 ls /var/lib/rancher/k3s/storage/); do
-  echo "Backing up $pvc_dir..."
-  docker cp "k3d-homelab-server-0:/var/lib/rancher/k3s/storage/$pvc_dir" "$BACKUP_DIR/"
-done
-
-echo "Backup complete: $BACKUP_DIR"
-ls "$BACKUP_DIR"
+```
+[ ] 1. Back up PVC data          (Step 1)
+[ ] 2. Back up Sealed Secrets keys  (Step 1)
+[ ] 3. Confirm mkcert CA is on Mac  (Step 1)
+[ ] 4. Note ArgoCD admin password   (optional)
 ```
 
-This will back up all of:
+---
+
+## Step 1 — Back up cluster state
+
+### PVC data
+
+```bash
+cd /Users/daneko/devops/homelab
+./scripts/pvc-backup.sh backup
+```
+
+This scales down all apps cleanly, backs up every PVC to `~/homelab-pvc-backup/<timestamp>/`, then scales apps back up. The following PVCs are included:
 
 | PVC | Namespace | Contents |
 |-----|-----------|----------|
-| `radarr` | radarr | Radarr DB + config |
 | `sonarr` | sonarr | Sonarr DB + config |
+| `radarr` | radarr | Radarr DB + config |
 | `bazarr` | bazarr | Bazarr DB + config |
 | `prowlarr` | prowlarr | Prowlarr DB + config |
-| `tdarr-config` | tdarr | Tdarr config |
-| `tdarr-data` | tdarr | Tdarr data |
 | `seerr` | seerr | Seerr DB + config |
+| `maintainerr` | maintainerr | Maintainerr DB + config |
+| `tdarr-config` | tdarr | Tdarr config |
+| `tdarr-data` | tdarr | Tdarr server data |
 
-> **Orphaned PVCs**: `ombi` (namespace `ombi`) and `requestrr-config` (namespace `requestrr`) still exist from decommissioned apps. These do not need to be restored — you can delete them with `kubectl delete pvc -n ombi ombi` and `kubectl delete pvc -n requestrr requestrr-config`.
+To see existing backups: `./scripts/pvc-backup.sh list`
+
+### Sealed Secrets keys
+
+The sealed-secrets controller uses a private key to decrypt SealedSecrets. A new cluster generates a new key, making all existing SealedSecrets unreadable — including `external-secrets/infisical-auth`, which bootstraps the entire secrets chain.
+
+```bash
+kubectl get secret -n kube-system \
+  -l sealedsecrets.bitnami.com/sealed-secrets-key \
+  -o yaml > ~/homelab-pvc-backup/sealed-secrets-keys.yaml
+```
+
+> Do not commit this file — it contains private key material.
+
+### mkcert CA
+
+The `mkcert-ca-secret` in cert-manager is the CA that signs all `*.homelab.local` TLS certs. It is not managed by ArgoCD and will not be recreated automatically. If lost, a new CA is generated and macOS will no longer trust homelab certs until re-trusted in Keychain.
+
+The CA key lives on your Mac — confirm it is present before deleting the cluster:
+
+```bash
+ls "$(mkcert -CAROOT)"
+# Expected: rootCA-key.pem  rootCA.pem
+```
+
+### ArgoCD admin password (optional)
+
+A fresh install generates a new `argocd-initial-admin-secret`. Note the current password if needed:
+
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" | base64 -d && echo
+```
 
 ---
 
@@ -58,12 +96,10 @@ This will back up all of:
 Edit `k3d-config.yaml` and bump the `image` field:
 
 ```yaml
-image: rancher/k3s:v1.34.0-k3s1   # ← new version
+image: rancher/k3s:v1.35.3-k3s1   # ← new version
 ```
 
 Find available tags at: https://github.com/k3s-io/k3s/releases
-
-> Only upgrade one minor version at a time (e.g. 1.33 → 1.34, not 1.33 → 1.35).
 
 ---
 
@@ -73,7 +109,7 @@ Find available tags at: https://github.com/k3s-io/k3s/releases
 k3d cluster delete homelab
 ```
 
-This removes all k3d containers and their volumes. Your `/Users/daneko/homelab-storage` host mount and the PVC backup from Step 1 are unaffected.
+This removes all k3d containers and their volumes. Your `/Users/daneko/homelab-storage` host mount and the backups from Step 1 are unaffected.
 
 ---
 
@@ -88,9 +124,29 @@ k3d updates your kubeconfig automatically. Port 6443 is pinned to host port `600
 
 ---
 
-## Step 5 — Bootstrap ArgoCD
+## Step 5 — Restore secrets (before ArgoCD)
 
-ArgoCD must be installed before the app-of-apps can deploy everything else:
+These must be in place before ArgoCD syncs, otherwise cert-manager and sealed-secrets will initialise with fresh state and the restore becomes harder.
+
+### Sealed Secrets keys
+
+```bash
+kubectl apply -f ~/homelab-pvc-backup/sealed-secrets-keys.yaml
+```
+
+### mkcert CA
+
+```bash
+kubectl create namespace cert-manager
+kubectl create secret tls mkcert-ca-secret \
+  -n cert-manager \
+  --cert="$(mkcert -CAROOT)/rootCA.pem" \
+  --key="$(mkcert -CAROOT)/rootCA-key.pem"
+```
+
+---
+
+## Step 6 — Bootstrap ArgoCD
 
 ```bash
 # Install ArgoCD
@@ -99,7 +155,10 @@ kubectl apply -k configs/setup/argocd
 # Wait for ArgoCD to come up
 kubectl rollout status deploy/argocd-server -n argocd --timeout=5m
 
-# Apply the app-of-apps (ArgoCD will then sync all other apps automatically)
+# Restart sealed-secrets controller so it picks up the imported keys
+kubectl rollout restart deploy/sealed-secrets-controller -n kube-system
+
+# Apply the app-of-apps — ArgoCD syncs everything else automatically
 kubectl apply -f argocd/app-of-apps.yaml
 ```
 
@@ -107,38 +166,20 @@ ArgoCD will pick up all applications and begin syncing. Setup apps (cert-manager
 
 ---
 
-## Step 6 — Restore PVC data
+## Step 7 — Restore PVC data
 
-Wait for ArgoCD to create the PVCs (deployments will be in `Pending` or `Running` briefly), then copy backup data back in.
+Wait for ArgoCD to sync and pods to reach `Running` or `Pending` state (PVCs must exist before restoring), then:
 
-Find the new PVC directory names:
 ```bash
-docker exec k3d-homelab-server-0 ls /var/lib/rancher/k3s/storage/
+cd /Users/daneko/devops/homelab
+./scripts/pvc-backup.sh restore ~/homelab-pvc-backup/<timestamp>
 ```
 
-Restore a specific app (example — Sonarr):
-```bash
-BACKUP_DIR="/Users/daneko/homelab-storage/pvc-backup/<timestamp>"
-
-# Find the new PVC dir for sonarr-config
-NEW_DIR=$(docker exec k3d-homelab-server-0 ls /var/lib/rancher/k3s/storage/ | grep sonarr-config)
-
-# Scale down first to avoid file conflicts
-kubectl scale deploy/sonarr -n sonarr --replicas=0
-
-# Copy backup in
-docker cp "$BACKUP_DIR/pvc-<old-id>_sonarr_sonarr-config/." \
-  "k3d-homelab-server-0:/var/lib/rancher/k3s/storage/$NEW_DIR/"
-
-# Scale back up
-kubectl scale deploy/sonarr -n sonarr --replicas=1
-```
-
-Repeat for each app. The PVC directory names change on recreation (UUID prefix), so match by the `_namespace_claimname` suffix.
+The script scales apps down, restores each PVC from the backup, then scales back up. It skips any PVC that doesn't exist yet and prints a warning — re-run after ArgoCD finishes syncing if needed.
 
 ---
 
-## Step 7 — Verify
+## Step 8 — Verify
 
 ```bash
 # All nodes ready
@@ -170,13 +211,13 @@ EOF
 sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder
 ```
 
-> k8s-gateway must be running and its LoadBalancer IPs must be up for DNS to work. Run this after Step 5.
+> k8s-gateway must be running and its LoadBalancer IPs must be up for DNS to work. Run this after Step 6.
 
 ---
 
 ## First-time cluster creation (no existing cluster)
 
-If you are setting up from scratch with no backup to restore, skip Steps 1 and 6:
+If you are setting up from scratch with no backup to restore, skip Steps 1, 5, and 7:
 
 ```bash
 k3d cluster create --config k3d-bootstrap/k3d-config.yaml
