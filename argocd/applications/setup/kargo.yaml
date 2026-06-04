@@ -13,8 +13,8 @@ spec:
   ignoreDifferences:
   - group: external-secrets.io
     kind: ExternalSecret
-    jsonPointers:
-    - /status
+    managedFieldsManagers:
+    - external-secrets
   sources:
   - repoURL: ghcr.io/akuity/kargo-charts
     chart: kargo
