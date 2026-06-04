@@ -11,10 +11,10 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true
   ignoreDifferences:
-  - group: ""
-    kind: Secret
-    name: kargo-admin-secret
-    namespace: kargo
+  - group: external-secrets.io
+    kind: ExternalSecret
+    jsonPointers:
+    - /status
   sources:
   - repoURL: ghcr.io/akuity/kargo-charts
     chart: kargo
