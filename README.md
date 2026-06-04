@@ -18,6 +18,7 @@ configs/
   internal/                 # Helm values and manifests for internal apps
 scripts/
   k3d-healthcheck.sh        # Cluster health check and flannel IP drift recovery
+renovate.json               # Automated dependency updates (monthly, via Renovate Bot)
 ```
 
 ## ArgoCD Model
@@ -31,6 +32,8 @@ Each project is scoped to its expected namespaces:
 | `setup` | `argocd`, `cert-manager`, `external-secrets`, `kargo`, `k8s-gateway`, `metallb-system`, `traefik` |
 | `external` | `seerr`, `doplarr` |
 | `internal` | `bazarr`, `maintainerr`, `prowlarr`, `radarr`, `sonarr`, `tdarr`, `unpackerr` |
+
+The `default` project intentionally uses wildcard source/destination/resource permissions — it exists solely to host the `app-of-apps` root Application and requires broad access to bootstrap everything else.
 
 ## Applications
 
@@ -120,10 +123,10 @@ dig @<k3d-server-node-ip> -p <nodeport> argocd.homelab.local +short
 
 ## Secrets
 
-Two systems manage secrets:
+Two systems manage secrets in an intentional two-layer pattern:
 
-- **[External Secrets Operator](https://external-secrets.io/)** + **[Infisical Cloud](https://infisical.com/)** — fetches secrets at runtime and creates Kubernetes `Secret` objects. Secrets refresh every 15 minutes.
-- **[Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets)** — encrypts secrets with the cluster's sealing key so they can be committed to Git safely.
+- **[Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets)** — bootstrap layer. Encrypts secrets with the cluster's sealing key for safe Git storage. Used to store the Infisical credentials that ESO needs to start.
+- **[External Secrets Operator](https://external-secrets.io/)** + **[Infisical Cloud](https://infisical.com/)** — runtime layer. Once ESO is running, it fetches all other secrets from Infisical Cloud and creates Kubernetes `Secret` objects. Secrets refresh every 15 minutes.
 
 > If you fork this repository, you will need to provision your own Infisical secrets and re-seal any Sealed Secret resources with your own cluster key.
 
@@ -133,11 +136,9 @@ Doplarr is a Discord slash-command bot that forwards requests to Seerr via Disco
 
 ## Cluster Recovery
 
-If the k3d cluster is restarted and nodes lose connectivity (flannel IP drift, stale taints, etc.), run:
+If the k3d cluster is restarted and nodes lose connectivity (flannel IP drift, stale taints, etc.), `scripts/k3d-healthcheck.sh` detects and corrects flannel annotation mismatches and verifies node readiness. It runs automatically via a macOS LaunchAgent on cluster restart. To trigger it manually:
 
 ```bash
 bash scripts/k3d-healthcheck.sh
 ```
-
-This script detects and corrects flannel annotation mismatches and verifies node readiness.
 

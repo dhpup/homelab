@@ -7,10 +7,6 @@ spec:
   sourceRepos:
   - '*'
   destinations:
-  - namespace: ombi
-    server: '*'
-  - namespace: requestrr
-    server: '*'
   - namespace: seerr
     server: '*'
   - namespace: doplarr
