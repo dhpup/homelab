@@ -10,11 +10,6 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
-  ignoreDifferences:
-  - group: external-secrets.io
-    kind: ExternalSecret
-    managedFieldsManagers:
-    - external-secrets
   sources:
   - repoURL: ghcr.io/akuity/kargo-charts
     chart: kargo
