@@ -7,6 +7,10 @@ api:
   adminAccount:
     enabled: true
 
+  tls:
+    enabled: false
+    terminatedUpstream: true
+
   ingress:
     enabled: true
     ingressClassName: traefik
