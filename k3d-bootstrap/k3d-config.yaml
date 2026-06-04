@@ -24,3 +24,9 @@ volumes:
   - volume: /Users/daneko/homelab-storage:/homelab-storage
     nodeFilters:
       - all
+options:
+  k3s:
+    extraArgs:
+      - arg: --disable=traefik
+        nodeFilters:
+          - server:*
