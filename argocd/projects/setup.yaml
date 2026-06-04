@@ -25,6 +25,10 @@ spec:
     server: '*'
   - namespace: kargo-shared-resources
     server: '*'
+  - namespace: kargo-system-resources
+    server: '*'
+  - namespace: kargo-cluster-secrets
+    server: '*'
   clusterResourceWhitelist:
   - group: '*'
     kind: '*'
