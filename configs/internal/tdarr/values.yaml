@@ -16,7 +16,7 @@ controllers:
       server:
         image:
           repository: haveagitgat/tdarr
-          tag: 2.70.01
+          tag: 2.77.01
           pullPolicy: IfNotPresent
         env:
           TZ: America/Toronto
@@ -40,7 +40,7 @@ controllers:
       node:
         image:
           repository: haveagitgat/tdarr_node
-          tag: 2.70.01
+          tag: 2.77.01
           pullPolicy: IfNotPresent
         env:
           TZ: America/Toronto
