@@ -10,6 +10,11 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+  ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: kargo-admin-secret
+    namespace: kargo
   sources:
   - repoURL: ghcr.io/akuity/kargo-charts
     chart: kargo
