@@ -41,33 +41,33 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 
 | App | Description |
 |-----|-------------|
-| [argocd](https://argoproj.github.io/cd/) v3.3.8 | GitOps controller — self-manages from this repo |
+| [argocd](https://argoproj.github.io/cd/) v3.4.3 | GitOps controller — self-manages from this repo |
 | [cert-manager](https://cert-manager.io/) v1.20.2 | TLS certificates via mkcert (self-signed CA) and Let's Encrypt |
-| [external-secrets](https://external-secrets.io/) v2.3.0 | Syncs secrets from Infisical Cloud into Kubernetes |
+| [external-secrets](https://external-secrets.io/) v2.5.0 | Syncs secrets from Infisical Cloud into Kubernetes |
 | [kargo](https://kargo.io/) v1.10.5 | Progressive delivery and promotion orchestration |
 | [k8s-gateway](https://github.com/ori-edge/k8s_gateway) v2.4.0 | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
-| [metallb](https://metallb.universe.tf/) v0.15.3 | Bare-metal load balancer (BGP mode, IP `172.19.0.0`) |
+| [metallb](https://metallb.universe.tf/) v0.16.1 | Bare-metal load balancer (BGP mode, IP `172.19.0.0`) |
 | [traefik](https://traefik.io/) v3.6 | Ingress controller (DaemonSet), default IngressClass, HTTP→HTTPS redirect |
-| [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) v2.18.5 | Encrypts secrets for safe storage in Git |
+| [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) v2.18.6 | Encrypts secrets for safe storage in Git |
 
 ### External
 
 | App | Description |
 |-----|-------------|
-| [seerr](https://seerr.dev/) | Media request portal and discovery (Overseerr/Jellyseerr successor) |
-| [doplarr](https://github.com/kiranshila/Doplarr) | Discord slash-command bot for requesting movies and TV shows via Seerr |
+| [seerr](https://seerr.dev/) v3.3.0 | Media request portal and discovery (Overseerr/Jellyseerr successor) |
+| [doplarr](https://github.com/kiranshila/Doplarr) v3.7.0 | Discord slash-command bot for requesting movies and TV shows via Seerr |
 
 ### Internal
 
 | App | Description |
 |-----|-------------|
-| [bazarr](https://www.bazarr.media/) | Automatic subtitle management |
-| [maintainerr](https://github.com/Maintainerr/Maintainerr) | Rule-based media cleanup and rotation for Plex/Jellyfin libraries |
-| [prowlarr](https://prowlarr.com/) | Indexer manager — syncs indexers to Radarr and Sonarr |
-| [radarr](https://radarr.video/) v6 | Movie library automation (root: `/homelab-storage/movies`) |
-| [sonarr](https://sonarr.tv/) v4 | TV series library automation (root: `/homelab-storage/tv`) |
-| [tdarr](https://tdarr.io/) | Automated media transcoding |
-| [unpackerr](https://github.com/unpackerr/unpackerr) | Unpacks completed downloads and notifies Radarr/Sonarr |
+| [bazarr](https://www.bazarr.media/) v1.5.6 | Automatic subtitle management |
+| [maintainerr](https://github.com/Maintainerr/Maintainerr) v3.13.0 | Rule-based media cleanup and rotation for Plex/Jellyfin libraries |
+| [prowlarr](https://prowlarr.com/) v2.3.5 | Indexer manager — syncs indexers to Radarr and Sonarr |
+| [radarr](https://radarr.video/) v6.2.0 | Movie library automation (root: `/homelab-storage/movies`) |
+| [sonarr](https://sonarr.tv/) v4.0.17 | TV series library automation (root: `/homelab-storage/tv`) |
+| [tdarr](https://tdarr.io/) v2.77.01 | Automated media transcoding |
+| [unpackerr](https://github.com/unpackerr/unpackerr) v0.15.2 | Unpacks completed downloads and notifies Radarr/Sonarr |
 
 ## Bootstrapping
 
