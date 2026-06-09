@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: doplarr
-        image: ghcr.io/kiranshila/doplarr:v3.7.0
+        image: ghcr.io/kiranshila/doplarr:v3.8.0
         imagePullPolicy: IfNotPresent
         env:
         - name: OVERSEERR__URL
