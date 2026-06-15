@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: recyclarr
+  namespace: argocd
+spec:
+  project: internal
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+  sources:
+  - chart: app-template
+    repoURL: https://bjw-s-labs.github.io/helm-charts
+    targetRevision: 5.0.1
+    helm:
+      valueFiles:
+      - $values/configs/internal/recyclarr/values.yaml
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    ref: values
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    path: configs/internal/recyclarr
+  destination:
+    name: in-cluster
+    namespace: recyclarr

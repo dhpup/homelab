@@ -13,6 +13,8 @@ spec:
     server: '*'
   - namespace: radarr
     server: '*'
+  - namespace: recyclarr
+    server: '*'
   - namespace: sonarr
     server: '*'
   - namespace: tdarr

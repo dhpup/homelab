@@ -1,0 +1,40 @@
+defaultPodOptions:
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
+    fsGroup: 0
+
+controllers:
+  main:
+    type: cronjob
+    cronjob:
+      schedule: "0 4 * * *"
+      concurrencyPolicy: Forbid
+      successfulJobsHistory: 3
+      failedJobsHistory: 3
+    containers:
+      main:
+        image:
+          repository: ghcr.io/recyclarr/recyclarr
+          tag: "8.6.0"
+          pullPolicy: IfNotPresent
+        command: ["recyclarr", "sync"]
+        env:
+          TZ: America/Toronto
+        envFrom:
+          - secretRef:
+              name: recyclarr-secret
+
+persistence:
+  # /config must be writable — recyclarr clones the trash-guides repo there each run
+  config:
+    type: emptyDir
+    globalMounts:
+      - path: /config
+  # mount only the config file, read-only, via subPath so it doesn't shadow /config
+  recyclarr-config:
+    type: configMap
+    name: recyclarr-config
+    globalMounts:
+      - path: /config/recyclarr.yml
+        subPath: recyclarr.yml
