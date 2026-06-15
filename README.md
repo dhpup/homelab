@@ -31,7 +31,7 @@ Each project is scoped to its expected namespaces:
 |---------|------------|
 | `setup` | `argocd`, `cert-manager`, `external-secrets`, `kargo`, `k8s-gateway`, `metallb-system`, `traefik` |
 | `external` | `seerr`, `doplarr` |
-| `internal` | `bazarr`, `maintainerr`, `prowlarr`, `radarr`, `sonarr`, `tdarr`, `unpackerr` |
+| `internal` | `bazarr`, `maintainerr`, `prowlarr`, `radarr`, `recyclarr`, `sonarr`, `tdarr`, `unpackerr` |
 
 The `default` project intentionally uses wildcard source/destination/resource permissions — it exists solely to host the `app-of-apps` root Application and requires broad access to bootstrap everything else.
 
@@ -65,6 +65,7 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 | [maintainerr](https://github.com/Maintainerr/Maintainerr) v3.15.0 | Rule-based media cleanup and rotation for Plex/Jellyfin libraries |
 | [prowlarr](https://prowlarr.com/) v2.3.5 | Indexer manager — syncs indexers to Radarr and Sonarr |
 | [radarr](https://radarr.video/) v6.2.1 | Movie library automation (root: `/homelab-storage/movies`) |
+| [recyclarr](https://recyclarr.dev/) v7.5.2 | Scheduled CronJob — syncs [Trash Guides](https://trash-guides.info/) quality definitions, custom formats, and profiles into Radarr/Sonarr |
 | [sonarr](https://sonarr.tv/) v4.0.17.2969 | TV series library automation (root: `/homelab-storage/tv`) |
 | [tdarr](https://tdarr.io/) v2.77.01 | Automated media transcoding |
 | [unpackerr](https://github.com/unpackerr/unpackerr) v0.15.2 | Unpacks completed downloads and notifies Radarr/Sonarr |
@@ -133,6 +134,19 @@ Two systems manage secrets in an intentional two-layer pattern:
 ## Doplarr
 
 Doplarr is a Discord slash-command bot that forwards requests to Seerr via Discord slash commands (`/request`). It has no web UI — configuration is entirely via environment variables in the deployment. Users must have their Discord ID linked in Seerr (Users → Edit → Discord ID) for requests to be attributed correctly.
+
+## Recyclarr
+
+Recyclarr keeps Radarr and Sonarr aligned with [Trash Guides](https://trash-guides.info/) recommendations. It has no web UI — it runs as a daily Kubernetes `CronJob` (04:00) that executes `recyclarr sync`, pulling quality definitions, custom formats, and quality profiles from the Trash Guides config templates. The Radarr/Sonarr API keys come from Infisical via an `ExternalSecret`; the sync config (`recyclarr.yml`) is a `ConfigMap` mounted into the job.
+
+The current setup applies the **HD-tier** profiles (Radarr: *HD Bluray + WEB*; Sonarr: *WEB-1080p*) — 720p/1080p only, no 4K/Remux. To apply changes immediately instead of waiting for the schedule:
+
+```bash
+kubectl -n recyclarr create job --from=cronjob/recyclarr recyclarr-manual
+kubectl -n recyclarr logs job/recyclarr-manual
+```
+
+> Pinned to image `7.5.2`: Recyclarr 8.x defaults its config-templates source to the upstream `v8` branch, whose includes registry is currently empty (breaking every templated include). 7.x sources templates from `master`, where the registry is populated, with no workaround needed.
 
 ## Cluster Recovery
 
