@@ -137,7 +137,7 @@ Doplarr is a Discord slash-command bot that forwards requests to Seerr via Disco
 
 ## Recyclarr
 
-Recyclarr keeps Radarr and Sonarr aligned with [Trash Guides](https://trash-guides.info/) recommendations. It has no web UI — it runs as a daily Kubernetes `CronJob` (04:00) that executes `recyclarr sync`, pulling quality definitions, custom formats, and quality profiles from the Trash Guides config templates. The Radarr/Sonarr API keys come from Infisical via an `ExternalSecret`; the sync config (`recyclarr.yml`) is a `ConfigMap` mounted into the job.
+Recyclarr keeps Radarr and Sonarr aligned with [Trash Guides](https://trash-guides.info/) recommendations. It has no web UI — it runs as a monthly Kubernetes `CronJob` (04:00 on the 1st) that executes `recyclarr sync`, pulling quality definitions, custom formats, and quality profiles from the Trash Guides config templates. The Radarr/Sonarr API keys come from Infisical via an `ExternalSecret`; the sync config (`recyclarr.yml`) is a `ConfigMap` mounted into the job.
 
 The current setup applies the **HD-tier** profiles (Radarr: *HD Bluray + WEB*; Sonarr: *WEB-1080p*) — 720p/1080p only, no 4K/Remux. To apply changes immediately instead of waiting for the schedule:
 

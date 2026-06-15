@@ -8,7 +8,7 @@ controllers:
   main:
     type: cronjob
     cronjob:
-      schedule: "0 4 * * *"
+      schedule: "0 4 1 * *"
       concurrencyPolicy: Forbid
       successfulJobsHistory: 3
       failedJobsHistory: 3
