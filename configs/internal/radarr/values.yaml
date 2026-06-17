@@ -10,7 +10,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/home-operations/radarr
-          tag: 6.2.1.10437
+          tag: 6.2.1.10461
           pullPolicy: IfNotPresent
         env:
           TZ: America/Toronto
