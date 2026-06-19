@@ -9,9 +9,12 @@ alloy:
   resources:
     requests:
       cpu: 50m
-      memory: 64Mi
-    limits:
       memory: 128Mi
+    # Generous ceiling: on startup loki.source.kubernetes replays each pod's
+    # retained log history all at once, which briefly spikes memory well above
+    # steady state. 128Mi OOMKilled it on this cluster; 512Mi rides out the burst.
+    limits:
+      memory: 512Mi
   configMap:
     content: |-
       discovery.kubernetes "pods" {
