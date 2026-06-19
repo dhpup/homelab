@@ -88,6 +88,12 @@ alertmanager:
 
 # --- Grafana ---
 grafana:
+  # Admin credentials come from Infisical via the grafana-admin ExternalSecret
+  # (see configs/) instead of the chart's auto-generated random password.
+  admin:
+    existingSecret: grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
   persistence:
     enabled: true
     storageClassName: local-path

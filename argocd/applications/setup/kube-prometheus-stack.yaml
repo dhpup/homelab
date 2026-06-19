@@ -22,6 +22,9 @@ spec:
   - repoURL: https://github.com/dhpup/homelab.git
     targetRevision: main
     ref: values
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    path: configs/setup/kube-prometheus-stack/configs
   destination:
     name: in-cluster
     namespace: monitoring
