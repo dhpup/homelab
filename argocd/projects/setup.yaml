@@ -17,6 +17,8 @@ spec:
     server: '*'
   - namespace: metallb-system
     server: '*'
+  - namespace: monitoring
+    server: '*'
   - namespace: traefik
     server: '*'
   - namespace: kube-system

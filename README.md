@@ -29,7 +29,7 @@ Each project is scoped to its expected namespaces:
 
 | Project | Namespaces |
 |---------|------------|
-| `setup` | `argocd`, `cert-manager`, `external-secrets`, `kargo`, `k8s-gateway`, `metallb-system`, `traefik` |
+| `setup` | `argocd`, `cert-manager`, `external-secrets`, `kargo`, `k8s-gateway`, `metallb-system`, `monitoring`, `traefik` |
 | `external` | `seerr`, `doplarr` |
 | `internal` | `bazarr`, `maintainerr`, `prowlarr`, `radarr`, `recyclarr`, `sonarr`, `tdarr`, `unpackerr` |
 
@@ -46,6 +46,9 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 | [external-secrets](https://external-secrets.io/) v2.5.0 | Syncs secrets from Infisical Cloud into Kubernetes |
 | [kargo](https://kargo.io/) v1.10.5 | Progressive delivery and promotion orchestration |
 | [k8s-gateway](https://github.com/ori-edge/k8s_gateway) v2.4.0 | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
+| [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) v86.2.3 | Observability — Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics |
+| [loki](https://grafana.com/oss/loki/) v7.0.0 | Log aggregation (single-binary, filesystem storage, 14-day retention) |
+| [alloy](https://grafana.com/docs/alloy/) v1.10.0 | DaemonSet log collector — ships pod logs to Loki (Promtail successor) |
 | [metallb](https://metallb.universe.tf/) v0.16.1 | Bare-metal load balancer (BGP mode, IP `172.19.0.0`) |
 | [traefik](https://traefik.io/) v3.6 | Ingress controller (DaemonSet), default IngressClass, HTTP→HTTPS redirect |
 | [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) v2.18.6 | Encrypts secrets for safe storage in Git |
@@ -92,6 +95,9 @@ All ingress endpoints use HTTPS with mkcert-issued certificates.
 |---------|-----|
 | ArgoCD | `https://argocd.homelab.local` |
 | Kargo | `https://kargo.homelab.local` |
+| Grafana | `https://grafana.homelab.local` |
+| Prometheus | `https://prometheus.homelab.local` |
+| Alertmanager | `https://alertmanager.homelab.local` |
 | Seerr | `https://seerr.homelab.local` |
 | Maintainerr | `https://maintainerr.homelab.local` |
 | Sonarr | `https://sonarr.homelab.local` |
@@ -147,6 +153,24 @@ kubectl -n recyclarr logs job/recyclarr-manual
 ```
 
 > Pinned to image `7.5.2`: Recyclarr 8.x defaults its config-templates source to the upstream `v8` branch, whose includes registry is currently empty (breaking every templated include). 7.x sources templates from `master`, where the registry is populated, with no workaround needed.
+
+## Monitoring
+
+Cluster and workload observability is provided by `kube-prometheus-stack` (metrics) plus `loki` + `alloy` (logs), all in the `monitoring` namespace. Grafana is the single pane of glass — it ships pre-loaded with the kube-prometheus dashboards and is wired to both the bundled Prometheus datasource and Loki for logs.
+
+Grafana's default login is `admin` / `prom-operator`. Retrieve (or rotate) it from the generated secret:
+
+```bash
+kubectl -n monitoring get secret kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 -d
+```
+
+Notes specific to this cluster:
+
+- **k3s control plane** — `kubeControllerManager`, `kubeScheduler`, `kubeProxy`, and `kubeEtcd` scrape targets are disabled in `values.yaml`; k3s bundles them into one process and does not expose their metrics, so leaving them on creates permanently-down targets and noisy alerts.
+- **Retention** — Prometheus keeps 15 days *or* 18 GB (whichever comes first, via `retentionSize`); Loki keeps 14 days. Storage plateaus once those windows fill (~33 Gi provisioned across the four PVCs, ~23 GB of actual data at steady state).
+- **Logs** — Alloy reads pod logs through the Kubernetes API (no host mounts) and pushes to Loki's gateway. Query them in Grafana via **Explore → Loki**, e.g. `{namespace="sonarr"}`.
+
+Remember to add the three new hostnames (`grafana`, `prometheus`, `alertmanager`.homelab.local) to `/etc/hosts` pointing at the k3d serverlb IP — see [DNS Setup](#dns-setup-macos).
 
 ## Cluster Recovery
 

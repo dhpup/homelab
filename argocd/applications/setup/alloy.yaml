@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: alloy
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"  # after loki (alloy pushes logs to loki-gateway)
+spec:
+  project: setup
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+  sources:
+  - chart: alloy
+    repoURL: https://grafana.github.io/helm-charts
+    targetRevision: 1.10.0
+    helm:
+      valueFiles:
+      - $values/configs/setup/alloy/values.yaml
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    ref: values
+  destination:
+    name: in-cluster
+    namespace: monitoring

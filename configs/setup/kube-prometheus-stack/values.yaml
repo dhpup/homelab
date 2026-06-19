@@ -1,0 +1,147 @@
+fullnameOverride: kube-prometheus-stack
+
+# --- k3s control plane ---
+# k3s bundles these into a single process and does not expose their metrics
+# endpoints, so leaving them enabled produces permanently-down scrape targets
+# and noisy "watchdog" alerts. Disable them.
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false
+
+# --- Prometheus ---
+prometheus:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: mkcert
+    hosts:
+      - prometheus.homelab.local
+    paths:
+      - /
+    pathType: Prefix
+    tls:
+      - secretName: prometheus.homelab.local
+        hosts:
+          - prometheus.homelab.local
+  prometheusSpec:
+    retention: 15d
+    retentionSize: "18GB"  # disk backstop: oldest blocks drop at 15d OR 18GB, whichever first
+    resources:
+      requests:
+        cpu: 200m
+        memory: 1Gi
+      limits:
+        memory: 2Gi
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+    # Discover ServiceMonitors / PodMonitors / Rules in ALL namespaces, not just
+    # those carrying this release's Helm label.
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    scrapeConfigSelectorNilUsesHelmValues: false
+
+# --- Alertmanager ---
+alertmanager:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: mkcert
+    hosts:
+      - alertmanager.homelab.local
+    paths:
+      - /
+    pathType: Prefix
+    tls:
+      - secretName: alertmanager.homelab.local
+        hosts:
+          - alertmanager.homelab.local
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 1Gi
+    resources:
+      requests:
+        cpu: 10m
+        memory: 50Mi
+      limits:
+        memory: 100Mi
+
+# --- Grafana ---
+grafana:
+  persistence:
+    enabled: true
+    storageClassName: local-path
+    accessModes: ["ReadWriteOnce"]
+    size: 2Gi
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: mkcert
+    hosts:
+      - grafana.homelab.local
+    path: /
+    pathType: Prefix
+    tls:
+      - secretName: grafana.homelab.local
+        hosts:
+          - grafana.homelab.local
+  # Wire Loki in as a log datasource alongside the bundled Prometheus datasource.
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki-gateway.monitoring.svc.cluster.local
+      jsonData:
+        maxLines: 1000
+
+# --- Supporting components ---
+prometheusOperator:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+    limits:
+      memory: 200Mi
+
+kube-state-metrics:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      memory: 150Mi
+
+prometheus-node-exporter:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      memory: 64Mi

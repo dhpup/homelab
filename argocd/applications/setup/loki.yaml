@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"  # before kube-prometheus-stack (Grafana datasource) and alloy (log push target)
+spec:
+  project: setup
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+  sources:
+  - chart: loki
+    repoURL: https://grafana.github.io/helm-charts
+    targetRevision: 7.0.0
+    helm:
+      valueFiles:
+      - $values/configs/setup/loki/values.yaml
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    ref: values
+  destination:
+    name: in-cluster
+    namespace: monitoring

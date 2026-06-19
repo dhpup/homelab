@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"  # after loki (Grafana is configured with a Loki datasource)
+spec:
+  project: setup
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true  # CRDs (prometheuses, etc.) exceed the client-side apply annotation limit
+  sources:
+  - chart: kube-prometheus-stack
+    repoURL: https://prometheus-community.github.io/helm-charts
+    targetRevision: 86.2.3
+    helm:
+      valueFiles:
+      - $values/configs/setup/kube-prometheus-stack/values.yaml
+  - repoURL: https://github.com/dhpup/homelab.git
+    targetRevision: main
+    ref: values
+  destination:
+    name: in-cluster
+    namespace: monitoring
