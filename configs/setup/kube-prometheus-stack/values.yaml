@@ -104,6 +104,10 @@ grafana:
       cpu: 50m
       memory: 128Mi
     limits:
+      # Hard CPU ceiling so a unified-storage/SQLite migration storm can never
+      # again spin Grafana up to ~all host cores. Idle use is ~70m; 2 cores is
+      # ample headroom for dashboard loads and migrations.
+      cpu: "2"
       memory: 256Mi
   ingress:
     enabled: true
