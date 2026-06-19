@@ -18,7 +18,7 @@ configs/
   internal/                 # Helm values and manifests for internal apps
 scripts/
   k3d-healthcheck.sh        # Cluster health check and flannel IP drift recovery
-renovate.json               # Automated dependency updates (monthly, via Renovate Bot)
+  pvc-backup.sh             # Back up and restore PVC data
 ```
 
 ## ArgoCD Model
@@ -29,7 +29,7 @@ Each project is scoped to its expected namespaces:
 
 | Project | Namespaces |
 |---------|------------|
-| `setup` | `argocd`, `cert-manager`, `external-secrets`, `kargo`, `k8s-gateway`, `metallb-system`, `monitoring`, `traefik` |
+| `setup` | `argocd`, `cert-manager`, `external-secrets`, `kargo`, `kargo-cluster-secrets`, `kargo-shared-resources`, `kargo-system-resources`, `k8s-gateway`, `kube-system`, `metallb-system`, `monitoring`, `traefik` |
 | `external` | `seerr`, `doplarr` |
 | `internal` | `bazarr`, `maintainerr`, `prowlarr`, `radarr`, `recyclarr`, `sonarr`, `tdarr`, `unpackerr` |
 
