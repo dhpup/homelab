@@ -69,7 +69,7 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 | [prowlarr](https://prowlarr.com/) v2.3.5 | Indexer manager — syncs indexers to Radarr and Sonarr |
 | [radarr](https://radarr.video/) v6.2.1 | Movie library automation (root: `/homelab-storage/movies`) |
 | [recyclarr](https://recyclarr.dev/) v7.5.2 | Scheduled CronJob — syncs [Trash Guides](https://trash-guides.info/) quality definitions, custom formats, and profiles into Radarr/Sonarr |
-| [sonarr](https://sonarr.tv/) v4.0.17.2969 | TV series library automation (root: `/homelab-storage/tv`) |
+| [sonarr](https://sonarr.tv/) v4.0.18 | TV series library automation (root: `/homelab-storage/tv`) |
 | [tdarr](https://tdarr.io/) v2.77.01 | Automated media transcoding |
 | [unpackerr](https://github.com/unpackerr/unpackerr) v0.15.2 | Unpacks completed downloads and notifies Radarr/Sonarr |
 
