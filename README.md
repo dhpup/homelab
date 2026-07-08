@@ -114,9 +114,17 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 ## DNS Setup (macOS)
 
-`k8s-gateway` resolves `*.homelab.local` dynamically from Ingress and Service resources. However, macOS `/etc/resolver` does not support custom DNS ports, and k8s-gateway's LoadBalancer IP is not directly routable from macOS on k3d.
+`k8s-gateway` resolves `*.homelab.local` dynamically from Ingress and Service resources, but it is only useful *inside* the cluster: its MetalLB LoadBalancer IP (`172.19.0.x`) is not routable from macOS, so from the Mac its answers point at unreachable addresses. Do **not** create an `/etc/resolver/homelab.local` file pointing at node IPs — node IPs drift when Docker reassigns addresses after a reboot, and the answers are unreachable anyway.
 
-Instead, add `/etc/hosts` entries pointing each `*.homelab.local` hostname to the k3d serverlb container IP (`192.168.97.4`), which proxies ports 80/443 into the cluster via Traefik. After editing:
+Instead, add `/etc/hosts` entries pointing each `*.homelab.local` hostname to **`127.0.0.1`**. The k3d serverlb publishes ports 80/443 to localhost (see `k3d-bootstrap/k3d-config.yaml`), and Traefik routes by SNI/Host header — so localhost works for every app and never drifts across reboots or IP reshuffles:
+
+```
+127.0.0.1 argocd.homelab.local
+127.0.0.1 radarr.homelab.local
+# ... one line per app
+```
+
+After editing:
 
 ```bash
 sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder
@@ -170,7 +178,7 @@ Notes specific to this cluster:
 - **Retention** — Prometheus keeps 15 days *or* 18 GB (whichever comes first, via `retentionSize`); Loki keeps 14 days. Storage plateaus once those windows fill (~33 Gi provisioned across the four PVCs, ~23 GB of actual data at steady state).
 - **Logs** — Alloy reads pod logs through the Kubernetes API (no host mounts) and pushes to Loki's gateway. Query them in Grafana via **Explore → Loki**, e.g. `{namespace="sonarr"}`.
 
-Remember to add the three new hostnames (`grafana`, `prometheus`, `alertmanager`.homelab.local) to `/etc/hosts` pointing at the k3d serverlb IP — see [DNS Setup](#dns-setup-macos).
+Remember to add the three new hostnames (`grafana`, `prometheus`, `alertmanager`.homelab.local) to `/etc/hosts` pointing at `127.0.0.1` — see [DNS Setup](#dns-setup-macos).
 
 ## Cluster Recovery
 

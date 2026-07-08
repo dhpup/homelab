@@ -38,7 +38,7 @@ Run through this before deleting the cluster. Each item covers something that li
 ### PVC data
 
 ```bash
-cd /Users/daneko/devops/homelab
+cd /Users/daneko/devops/homelabx/homelab
 ./scripts/pvc-backup.sh backup
 ```
 
@@ -116,7 +116,7 @@ This removes all k3d containers and their volumes. Your `/Users/daneko/homelab-s
 ## Step 4 — Recreate the cluster
 
 ```bash
-cd /Users/daneko/devops/homelab
+cd /Users/daneko/devops/homelabx/homelab
 k3d cluster create --config k3d-bootstrap/k3d-config.yaml
 ```
 
@@ -162,7 +162,7 @@ kubectl rollout restart deploy/sealed-secrets-controller -n kube-system
 kubectl apply -f argocd/app-of-apps.yaml
 ```
 
-ArgoCD will pick up all applications and begin syncing. Setup apps (cert-manager, metallb, traefik, etc.) have `automated: {}` and will sync without intervention.
+ArgoCD will pick up all applications and begin syncing. All apps have automated sync with prune and self-heal enabled, so everything converges without intervention.
 
 ---
 
@@ -171,7 +171,7 @@ ArgoCD will pick up all applications and begin syncing. Setup apps (cert-manager
 Wait for ArgoCD to sync and pods to reach `Running` or `Pending` state (PVCs must exist before restoring), then:
 
 ```bash
-cd /Users/daneko/devops/homelab
+cd /Users/daneko/devops/homelabx/homelab
 ./scripts/pvc-backup.sh restore ~/homelab-pvc-backup/<timestamp>
 ```
 
@@ -198,20 +198,20 @@ bash scripts/k3d-healthcheck.sh
 
 These are not in git and must be recreated manually:
 
-**DNS resolver** (`/etc/resolver/homelab.local`):
+**DNS** (`/etc/hosts`):
+
+Point each `*.homelab.local` hostname at `127.0.0.1` — the k3d serverlb publishes
+80/443 to localhost and Traefik routes by hostname, so entries never drift when
+Docker reassigns container IPs. See the top-level README's [DNS Setup](../README.md#dns-setup-macos).
+
 ```bash
-sudo mkdir -p /etc/resolver
-sudo tee /etc/resolver/homelab.local <<'EOF'
-# Homelab DNS via k8s-gateway LoadBalancer endpoints
-nameserver 192.168.97.2
-nameserver 192.168.97.3
-nameserver 192.168.97.5
-nameserver 192.168.97.6
-EOF
-sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder
+sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder   # after editing /etc/hosts
 ```
 
-> k8s-gateway must be running and its LoadBalancer IPs must be up for DNS to work. Run this after Step 6.
+> Do **not** create `/etc/resolver/homelab.local` pointing at node or LoadBalancer
+> IPs — node IPs drift across reboots and the MetalLB IPs (`172.19.0.x`) that
+> k8s-gateway answers with are not routable from macOS. If such a file exists,
+> remove it: `sudo rm /etc/resolver/homelab.local`
 
 **Auto-heal LaunchAgent** (`com.homelab.k3d-healthcheck`):
 
