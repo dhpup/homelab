@@ -3,12 +3,16 @@ kind: Application
 metadata:
   name: kube-prometheus-stack
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: "2"  # after loki (Grafana is configured with a Loki datasource)
 spec:
   project: setup
   syncPolicy:
-    automated: {}
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true  # CRDs (prometheuses, etc.) exceed the client-side apply annotation limit

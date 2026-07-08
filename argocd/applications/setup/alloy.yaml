@@ -3,12 +3,16 @@ kind: Application
 metadata:
   name: alloy
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: "2"  # after loki (alloy pushes logs to loki-gateway)
 spec:
   project: setup
   syncPolicy:
-    automated: {}
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
   sources:

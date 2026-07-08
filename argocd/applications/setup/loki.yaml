@@ -3,12 +3,16 @@ kind: Application
 metadata:
   name: loki
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: "1"  # before kube-prometheus-stack (Grafana datasource) and alloy (log push target)
 spec:
   project: setup
   syncPolicy:
-    automated: {}
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
