@@ -49,7 +49,7 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 | [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) v86.2.3 | Observability — Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics |
 | [loki](https://grafana.com/oss/loki/) v7.0.0 | Log aggregation (single-binary, filesystem storage, 14-day retention) |
 | [alloy](https://grafana.com/docs/alloy/) v1.10.0 | DaemonSet log collector — ships pod logs to Loki (Promtail successor) |
-| [metallb](https://metallb.universe.tf/) v0.16.1 | Bare-metal load balancer (BGP mode, IP `172.19.0.0`) |
+| [metallb](https://metallb.universe.tf/) v0.16.1 | Bare-metal load balancer (BGP mode, pool `172.19.0.1-50`, in-cluster only) |
 | [traefik](https://traefik.io/) v3.6 | Ingress controller (DaemonSet), default IngressClass, HTTP→HTTPS redirect |
 | [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) v2.18.6 | Encrypts secrets for safe storage in Git |
 
