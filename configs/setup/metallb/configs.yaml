@@ -1,32 +1,26 @@
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
+  # Name kept as "bgp-pool" for continuity (referenced by tdarr and
+  # k8s-gateway address-pool annotations); the cluster now advertises via
+  # L2, not BGP — renaming in place isn't safe as two pools with the same
+  # CIDR can't coexist during an Argo sync.
   name: bgp-pool
 spec:
   addresses:
-  # Explicit range: excludes the 172.19.0.0 network address (previously a
-  # full /16 that traefik was pinned to). These IPs are in-cluster only —
-  # not routable from macOS; host access goes via the k3d serverlb.
+  # In-cluster only — not routable from macOS; host access is via the k3d
+  # serverlb (localhost:80/443 → Traefik). Excludes the 172.19.0.0 network address.
   - 172.19.0.1-172.19.0.50
 
 ---
 
+# L2 mode: the speaker answers ARP for these IPs on the k3d Docker bridge.
+# (Previously BGP mode peering with 192.168.1.1 — that session never
+# established; the router wasn't a BGP peer, so advertisement was dead.)
 apiVersion: metallb.io/v1beta1
-kind: BGPAdvertisement
+kind: L2Advertisement
 metadata:
-  name: bgp-advertisement
+  name: homelab-l2
 spec:
   ipAddressPools:
   - bgp-pool
-  aggregationLength: 32 # advertise each route as a /32
-
----
-
-apiVersion: metallb.io/v1beta2
-kind: BGPPeer
-metadata:
-  name: tnsr-peer
-spec:
-  myASN: 64512
-  peerASN: 64512
-  peerAddress: 192.168.1.1

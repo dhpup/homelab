@@ -1,4 +1,9 @@
-installCRDs: false
+# CRDs managed by this Helm release so a cluster recreate reinstalls them.
+# Previously false, leaving the 23 ESO CRDs unowned by Git — a fresh
+# bootstrap would skip them and break the entire secrets chain.
+# Adoption of the existing CRDs is safe: the app uses ServerSideApply
+# (the largest CRD is ~633KB, over the client-side apply limit).
+installCRDs: true
 
 resources:
   requests:
