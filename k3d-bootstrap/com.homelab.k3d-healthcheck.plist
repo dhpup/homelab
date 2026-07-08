@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.homelab.k3d-healthcheck</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/daneko/devops/homelabx/homelab/scripts/k3d-healthcheck.sh</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+        <key>HOME</key>
+        <string>/Users/daneko</string>
+        <key>KUBECONFIG</key>
+        <string>/Users/daneko/.kube/config</string>
+    </dict>
+
+    <!-- Heal immediately at login/after reboot (the reboot recovery case) ... -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- ...and re-check hourly while logged in. -->
+    <key>StartInterval</key>
+    <integer>3600</integer>
+
+    <key>StandardOutPath</key>
+    <string>/Users/daneko/Library/Logs/k3d-healthcheck.launchd.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/daneko/Library/Logs/k3d-healthcheck.launchd.log</string>
+</dict>
+</plist>

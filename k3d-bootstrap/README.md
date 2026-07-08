@@ -213,6 +213,30 @@ sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder
 
 > k8s-gateway must be running and its LoadBalancer IPs must be up for DNS to work. Run this after Step 6.
 
+**Auto-heal LaunchAgent** (`com.homelab.k3d-healthcheck`):
+
+After a machine reboot, Docker restarts the k3d node containers in parallel with no
+ordering, which can leave an agent's kubelet wedged (`NotReady` / "Kubelet stopped
+posting node status"). Every app with a pod on that node then sits `Progressing` in
+ArgoCD. `scripts/k3d-healthcheck.sh` detects and repairs this; the LaunchAgent runs it
+at login and hourly.
+
+```bash
+# Install / update from the tracked copy
+cp k3d-bootstrap/com.homelab.k3d-healthcheck.plist ~/Library/LaunchAgents/
+launchctl bootout gui/$(id -u)/com.homelab.k3d-healthcheck 2>/dev/null || true
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.homelab.k3d-healthcheck.plist
+launchctl kickstart -k gui/$(id -u)/com.homelab.k3d-healthcheck   # run once now
+
+# Verify it ran (runs > 0, last exit code = 0)
+launchctl print gui/$(id -u)/com.homelab.k3d-healthcheck | grep -E 'runs|last exit'
+tail ~/Library/Logs/k3d-healthcheck.log
+```
+
+> The plist hard-codes the absolute path to `k3d-healthcheck.sh`. **If you move this
+> repo, re-run the install block above** — a stale path fails silently and self-healing
+> stops (check `~/Library/Logs/k3d-healthcheck.launchd.log` for "No such file").
+
 ---
 
 ## First-time cluster creation (no existing cluster)
