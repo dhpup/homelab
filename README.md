@@ -65,7 +65,7 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 | App | Description |
 |-----|-------------|
 | [bazarr](https://www.bazarr.media/) v1.5.6 | Automatic subtitle management |
-| [maintainerr](https://github.com/Maintainerr/Maintainerr) v3.15.0 | Rule-based media cleanup and rotation for Plex/Jellyfin libraries |
+| [maintainerr](https://github.com/Maintainerr/Maintainerr) v3.17.0 | Rule-based media cleanup and rotation for Plex/Jellyfin libraries |
 | [prowlarr](https://prowlarr.com/) v2.3.5 | Indexer manager — syncs indexers to Radarr and Sonarr |
 | [radarr](https://radarr.video/) v6.2.1 | Movie library automation (root: `/homelab-storage/movies`) |
 | [recyclarr](https://recyclarr.dev/) v7.5.2 | Scheduled CronJob — syncs [Trash Guides](https://trash-guides.info/) quality definitions, custom formats, and profiles into Radarr/Sonarr |
