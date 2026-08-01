@@ -10,7 +10,7 @@ controllers:
       main:
         image:
           repository: lscr.io/linuxserver/prowlarr
-          tag: 2.5.2.5491
+          tag: 2.5.2.5491-ls155
           pullPolicy: IfNotPresent
         env:
           TZ: America/Toronto
