@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: doplarr
-        image: ghcr.io/activexray/doplarr:v3.8.0
+        image: ghcr.io/activexray/doplarr_rs:v4.6.0
         imagePullPolicy: IfNotPresent
         env:
         - name: OVERSEERR__URL
