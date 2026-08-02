@@ -44,7 +44,7 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 | [argocd](https://argoproj.github.io/cd/) v3.4.3 | GitOps controller — self-manages from this repo |
 | [cert-manager](https://cert-manager.io/) v1.20.2 | TLS certificates via mkcert (self-signed CA) and Let's Encrypt |
 | [external-secrets](https://external-secrets.io/) v2.5.0 | Syncs secrets from Infisical Cloud into Kubernetes |
-| [kargo](https://kargo.io/) v1.10.5 | Progressive delivery and promotion orchestration |
+| [kargo](https://kargo.io/) v1.11.0 | Progressive delivery and promotion orchestration |
 | [k8s-gateway](https://github.com/ori-edge/k8s_gateway) v2.4.0 | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
 | [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) v86.2.3 | Observability — Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics |
 | [loki](https://grafana.com/oss/loki/) v7.0.0 | Log aggregation (single-binary, filesystem storage, 14-day retention) |
