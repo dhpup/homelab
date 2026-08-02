@@ -58,7 +58,7 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 | App | Description |
 |-----|-------------|
 | [seerr](https://seerr.dev/) v3.4.1 | Media request portal and discovery (Overseerr/Jellyseerr successor) |
-| [doplarr](https://github.com/kiranshila/Doplarr) v3.8.0 | Discord slash-command bot for requesting movies and TV shows via Seerr |
+| [doplarr](https://github.com/activexray/Doplarr) v3.8.0 | Discord slash-command bot for requesting movies and TV shows via Seerr |
 
 ### Internal
 
