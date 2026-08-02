@@ -41,7 +41,7 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 
 | App | Description |
 |-----|-------------|
-| [argocd](https://argoproj.github.io/cd/) v3.4.3 | GitOps controller — self-manages from this repo |
+| [argocd](https://argoproj.github.io/cd/) v3.4.6 | GitOps controller — self-manages from this repo |
 | [cert-manager](https://cert-manager.io/) v1.20.2 | TLS certificates via mkcert (self-signed CA) and Let's Encrypt |
 | [external-secrets](https://external-secrets.io/) v2.5.0 | Syncs secrets from Infisical Cloud into Kubernetes |
 | [kargo](https://kargo.io/) v1.11.0 | Progressive delivery and promotion orchestration |
