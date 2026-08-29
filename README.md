@@ -41,17 +41,17 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 
 | App | Description |
 |-----|-------------|
-| [argocd](https://argoproj.github.io/cd/) v3.4.6 | GitOps controller — self-manages from this repo |
-| [cert-manager](https://cert-manager.io/) v1.20.2 | TLS certificates via mkcert (self-signed CA) and Let's Encrypt |
-| [external-secrets](https://external-secrets.io/) v2.5.0 | Syncs secrets from Infisical Cloud into Kubernetes |
-| [kargo](https://kargo.io/) v1.11.0 | Progressive delivery and promotion orchestration |
+| [argocd](https://argoproj.github.io/cd/) v3.4.8 | GitOps controller — self-manages from this repo |
+| [cert-manager](https://cert-manager.io/) v1.21.1 | TLS certificates via mkcert (self-signed CA) and Let's Encrypt |
+| [external-secrets](https://external-secrets.io/) v2.10.0 | Syncs secrets from Infisical Cloud into Kubernetes |
+| [kargo](https://kargo.io/) v1.11.2 | Progressive delivery and promotion orchestration |
 | [k8s-gateway](https://github.com/ori-edge/k8s_gateway) v2.4.0 | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
-| [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) v86.2.3 | Observability — Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics |
-| [loki](https://grafana.com/oss/loki/) v7.0.0 | Log aggregation (single-binary, filesystem storage, 14-day retention) |
-| [alloy](https://grafana.com/docs/alloy/) v1.10.0 | DaemonSet log collector — ships pod logs to Loki (Promtail successor) |
+| [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) v88.6.1 | Observability — Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics |
+| [loki](https://grafana.com/oss/loki/) v7.3.0 | Log aggregation (single-binary, filesystem storage, 14-day retention) |
+| [alloy](https://grafana.com/docs/alloy/) v1.12.1 | DaemonSet log collector — ships pod logs to Loki (Promtail successor) |
 | [metallb](https://metallb.universe.tf/) v0.16.1 | Bare-metal load balancer (BGP mode, pool `172.19.0.1-50`, in-cluster only) |
-| [traefik](https://traefik.io/) v3.6 | Ingress controller (DaemonSet), default IngressClass, HTTP→HTTPS redirect |
-| [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) v2.18.6 | Encrypts secrets for safe storage in Git |
+| [traefik](https://traefik.io/) v3.7.12 | Ingress controller (DaemonSet), default IngressClass, HTTP→HTTPS redirect |
+| [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) v2.19.3 | Encrypts secrets for safe storage in Git |
 
 ### External
 
