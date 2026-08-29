@@ -10,7 +10,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/home-operations/sonarr
-          tag: 4.0.19.3006
+          tag: 4.0.19.3007
           pullPolicy: IfNotPresent
         env:
           TZ: America/Toronto
