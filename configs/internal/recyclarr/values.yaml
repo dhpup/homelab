@@ -16,11 +16,10 @@ controllers:
       main:
         image:
           repository: ghcr.io/recyclarr/recyclarr
-          # Pinned to 7.x: Recyclarr 8.x defaults the config-templates provider
-          # to the repo's `v8` branch, whose includes registry is currently
-          # empty (breaks every `include: template:`). 7.x clones templates
-          # from `master`, where the registry is populated, with no override.
-          tag: "7.5.2"
+          # 8.x tracks the config-templates `master` registry (the `v8` branch
+          # merged into master 2026-08-07 and was deleted); full TRaSH templates
+          # replace the old per-include registry.
+          tag: "8.7.1"
           pullPolicy: IfNotPresent
         command: ["recyclarr", "sync"]
         env:
