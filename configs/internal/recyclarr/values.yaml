@@ -29,15 +29,18 @@ controllers:
               name: recyclarr-secret
 
 persistence:
-  # /config must be writable — recyclarr clones the trash-guides repo there each run
+  # /config must be writable — recyclarr clones the guide/template repos there each run
   config:
     type: emptyDir
     globalMounts:
       - path: /config
-  # mount only the config file, read-only, via subPath so it doesn't shadow /config
+  # mount the template config files (recyclarr 8.x `config create -t` output),
+  # read-only, via subPath so they don't shadow /config
   recyclarr-config:
     type: configMap
     name: recyclarr-config
     globalMounts:
-      - path: /config/recyclarr.yml
-        subPath: recyclarr.yml
+      - path: /config/configs/hd-bluray-web.yml
+        subPath: hd-bluray-web.yml
+      - path: /config/configs/web-1080p.yml
+        subPath: web-1080p.yml
