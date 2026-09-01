@@ -99,16 +99,23 @@ grafana:
     storageClassName: local-path
     accessModes: ["ReadWriteOnce"]
     size: 2Gi
+  # Hard CPU ceiling so a unified-storage/SQLite migration storm can never
+  # again spin Grafana up to ~all host cores. Idle use is ~70m; 2 cores is
+  # ample headroom for dashboard loads and migrations.
   resources:
     requests:
       cpu: 50m
       memory: 128Mi
     limits:
-      # Hard CPU ceiling so a unified-storage/SQLite migration storm can never
-      # again spin Grafana up to ~all host cores. Idle use is ~70m; 2 cores is
-      # ample headroom for dashboard loads and migrations.
       cpu: "2"
-      memory: 256Mi
+      memory: 512Mi
+  env:
+    # Grafana 13 unified storage on sqlite: with the default DELETE journal
+    # mode, a background job (secure-values cleanup / lease driver) that gets
+    # stuck mid-transaction freezes ALL DB access — /api/health reports
+    # database "failing" and liveness killed the pod in a ~35min loop since
+    # the 88.6.1 bump. WAL keeps reads unblocked while a write is pending.
+    GF_DATABASE_WAL: "true"
   ingress:
     enabled: true
     ingressClassName: traefik
