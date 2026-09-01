@@ -4,5 +4,6 @@ kind: Kustomization
 resources:
   - argocd-install.yaml
   - argocd-namespace.yaml
+  - argocd-notifications-rbac.yaml
 
 namespace: argocd
