@@ -1,8 +1,10 @@
 # argocd v3.4.8 install.yaml only grants the notifications controller a
-# namespaced Role covering applications/appprojects — but those CRDs are
-# cluster-scoped, so the Role grants nothing (verified: auth can-i = no).
-# The controller's app informer can't list, so every app-driven notification
-# trigger (on-sync-failed, on-health-degraded, ...) was silently dead, and the
+# namespaced Role covering applications/appprojects. But: appprojects is
+# cluster-scoped (a Role cannot grant it at all), and applications is
+# namespaced where a Role only covers the argocd namespace — while the
+# controller lists cluster-wide, so its app informer 403'd on every list
+# (verified: auth can-i = no). All app-driven notification triggers
+# (on-sync-failed, on-health-degraded, ...) were silently dead, and the
 # controller spammed "cannot list applications: forbidden" ~every 30s.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
