@@ -44,6 +44,7 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 | [argocd](https://argoproj.github.io/cd/) v3.4.8 | GitOps controller — self-manages from this repo |
 | [cert-manager](https://cert-manager.io/) v1.21.1 | TLS certificates via mkcert (self-signed CA) and Let's Encrypt |
 | [external-secrets](https://external-secrets.io/) v2.10.0 | Syncs secrets from Infisical Cloud into Kubernetes |
+| external-secrets-store | Deploys the Infisical `ClusterSecretStore` that backs ESO (plain manifests, no chart) |
 | [kargo](https://kargo.io/) v1.11.2 | Progressive delivery and promotion orchestration |
 | [k8s-gateway](https://github.com/ori-edge/k8s_gateway) v2.4.0 | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
 | [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) v88.6.1 | Observability — Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics |
@@ -65,7 +66,7 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 | App | Description |
 |-----|-------------|
 | [bazarr](https://www.bazarr.media/) v1.6.0 | Automatic subtitle management |
-| [maintainerr](https://github.com/Maintainerr/Maintainerr) v3.26.0 | Rule-based media cleanup and rotation for Plex/Jellyfin libraries |
+| [maintainerr](https://github.com/Maintainerr/Maintainerr) v3.27.0 | Rule-based media cleanup and rotation for Plex/Jellyfin libraries |
 | [prowlarr](https://prowlarr.com/) v2.5.2 | Indexer manager — syncs indexers to Radarr and Sonarr |
 | [radarr](https://radarr.video/) v6.4.3 | Movie library automation (root: `/homelab-storage/movies`) |
 | [recyclarr](https://recyclarr.dev/) v8.7.2 | Scheduled CronJob — syncs [Trash Guides](https://trash-guides.info/) quality definitions, custom formats, and profiles into Radarr/Sonarr |
@@ -151,7 +152,7 @@ Doplarr is a Discord slash-command bot that forwards requests to Seerr via Disco
 
 ## Recyclarr
 
-Recyclarr keeps Radarr and Sonarr aligned with [Trash Guides](https://trash-guides.info/) recommendations. It has no web UI — it runs as a monthly Kubernetes `CronJob` (04:00 on the 1st) that executes `recyclarr sync`, pulling quality definitions, custom formats, and quality profiles from the Trash Guides config templates. The Radarr/Sonarr API keys come from Infisical via an `ExternalSecret`; the sync config (`recyclarr.yml`) is a `ConfigMap` mounted into the job.
+Recyclarr keeps Radarr and Sonarr aligned with [Trash Guides](https://trash-guides.info/) recommendations. It has no web UI — it runs as a monthly Kubernetes `CronJob` (04:00 on the 1st) that executes `recyclarr sync`, pulling quality definitions, custom formats, and quality profiles from the Trash Guides config templates. The Radarr/Sonarr API keys come from Infisical via an `ExternalSecret`; the TRaSH config files (generated with 8.x `config create -t`) are a `ConfigMap` mounted into the job.
 
 The current setup applies the **HD-tier** profiles (Radarr: *HD Bluray + WEB*; Sonarr: *WEB-1080p*) — 720p/1080p only, no 4K/Remux. To apply changes immediately instead of waiting for the schedule:
 
@@ -160,7 +161,7 @@ kubectl -n recyclarr create job --from=cronjob/recyclarr recyclarr-manual
 kubectl -n recyclarr logs job/recyclarr-manual
 ```
 
-> Pinned to image `7.5.2`: Recyclarr 8.x defaults its config-templates source to the upstream `v8` branch, whose includes registry is currently empty (breaking every templated include). 7.x sources templates from `master`, where the registry is populated, with no workaround needed.
+> Running `8.7.2`. Earlier 8.x releases defaulted their config-templates source to the upstream `v8` branch, whose includes registry was empty (breaking every templated include) — that branch was merged into `master` (2026-08-07) and deleted, so 8.x works out of the box now.
 
 ## Monitoring
 
