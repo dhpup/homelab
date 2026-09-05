@@ -1,0 +1,20 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/activexray/doplarr_rs
+          tag: v4.6.0
+          pullPolicy: IfNotPresent
+        env:
+          OVERSEERR__URL: http://seerr.seerr.svc.cluster.local:5055
+        envFrom:
+          - secretRef:
+              name: doplarr-secret
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 100m
+          limits:
+            memory: 256Mi
+            cpu: 250m

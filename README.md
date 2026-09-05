@@ -147,7 +147,7 @@ Two systems manage secrets in an intentional two-layer pattern:
 
 ## Doplarr
 
-Doplarr is a Discord slash-command bot that forwards requests to Seerr via Discord slash commands (`/request`). It has no web UI — configuration is entirely via environment variables in the deployment. Users must have their Discord ID linked in Seerr (Users → Edit → Discord ID) for requests to be attributed correctly.
+Doplarr is a Discord slash-command bot that forwards requests to Seerr via Discord slash commands (`/request`). It has no web UI — configuration is via environment variables in `configs/external/doplarr/values.yaml` (deployed with the TrueCharts `app-template` chart like the other apps); the Discord bot token and Seerr API key come from Infisical via an `ExternalSecret`. Users must have their Discord ID linked in Seerr (Users → Edit → Discord ID) for requests to be attributed correctly.
 
 ## Recyclarr
 
