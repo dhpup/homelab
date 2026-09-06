@@ -15,7 +15,7 @@ spec:
       - CreateNamespace=true
   sources:
   - chart: k8s-gateway
-    repoURL: https://k8s-gateway.kryptonian.kapsi.fi/
+    repoURL: oci://ghcr.io/k8s-gateway/charts/k8s-gateway
     targetRevision: 3.7.2
     helm:
       valueFiles:
