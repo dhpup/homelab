@@ -1,4 +1,8 @@
 domain: homelab.local home.homelab.local homelab.local
+image:
+  registry: ghcr.io
+  repository: k8s-gateway/k8s_gateway
+  tag: 1.7.0
 service:
   loadBalancerIP: 172.19.0.1
 fallthrough:
