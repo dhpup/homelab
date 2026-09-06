@@ -6,8 +6,7 @@ ingressClass:
   isDefaultClass: true
 
 service:
-  annotations:
-    metallb.universe.tf/loadBalancerIPs: "172.19.0.10"
+  loadBalancerIP: 172.19.0.10
   spec:
     externalTrafficPolicy: Local
 

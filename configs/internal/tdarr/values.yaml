@@ -69,7 +69,7 @@ service:
     controller: main
     type: LoadBalancer
     annotations:
-      metallb.universe.tf/address-pool: bgp-pool
+      metallb.io/address-pool: bgp-pool
     externalTrafficPolicy: Local
     ports:
       controller:

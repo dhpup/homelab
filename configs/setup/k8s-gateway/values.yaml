@@ -1,7 +1,5 @@
 domain: homelab.local home.homelab.local homelab.local
 service:
-  annotations:
-    metallb.universe.tf/address-pool: bgp-pool
   loadBalancerIP: 172.19.0.1
 fallthrough:
   enabled: true
