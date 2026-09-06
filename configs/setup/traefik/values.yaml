@@ -6,9 +6,9 @@ ingressClass:
   isDefaultClass: true
 
 service:
-  loadBalancerIP: 172.19.0.10
   spec:
     externalTrafficPolicy: Local
+    loadBalancerIP: 172.19.0.10
 
 ports:
   web:
