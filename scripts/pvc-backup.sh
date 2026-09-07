@@ -140,7 +140,8 @@ cmd_restore() {
   # Restore copies archives via the shared host mount (/homelab-storage) so the
   # pod reads from a file rather than stdin — stdin piping is unreliable for
   # large archives and silently truncates without error.
-  local HOST_STORAGE="/Users/daneko/homelab-storage"
+  local HOST_STORAGE="/Users/daneko/homelab-storage"   # host-side path
+  local NODE_STORAGE="/homelab-storage"                # in-cluster view of HOST_STORAGE
   local STAGING="$HOST_STORAGE/.pvc-restore-staging"
 
   ensure_context
@@ -203,7 +204,7 @@ spec:
       claimName: $pvc
   - name: host-staging
     hostPath:
-      path: $HOST_STORAGE/.pvc-restore-staging
+      path: $NODE_STORAGE/.pvc-restore-staging
       type: Directory
 EOF
 

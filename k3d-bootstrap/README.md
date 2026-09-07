@@ -71,14 +71,21 @@ kubectl get secret -n kube-system \
 
 ### mkcert CA
 
-The `mkcert-ca-secret` in cert-manager is the CA that signs all `*.homelab.local` TLS certs. It is not managed by ArgoCD and will not be recreated automatically. If lost, a new CA is generated and macOS will no longer trust homelab certs until re-trusted in Keychain.
+The `mkcert-ca-secret` in cert-manager is the CA that signs all `*.homelab.local` TLS certs. It is stored in the repo as a SealedSecret (sealed with the Mac's mkcert CA), so it is restored automatically by the app-of-apps sync once the sealed-secrets keys are in place (Step 5).
 
-The CA key lives on your Mac — confirm it is present before deleting the cluster:
+The CA key also lives on your Mac — confirm it is present before deleting the cluster (useful if the SealedSecret path ever fails):
 
 ```bash
 ls "$(mkcert -CAROOT)"
 # Expected: rootCA-key.pem  rootCA.pem
 ```
+
+> Do **not** pre-create the secret manually (`kubectl create secret tls mkcert-ca-secret ...`): a pre-existing plain Secret blocks the sealed-secrets controller from taking ownership, and the SealedSecret stays `failed`. If you did (e.g. following older docs), delete the plain secret and restart the controller so the SealedSecret recreates it:
+>
+> ```bash
+> kubectl delete secret mkcert-ca-secret -n cert-manager
+> kubectl rollout restart deploy/sealed-secrets-controller -n kube-system
+> ```
 
 ### ArgoCD admin password (optional)
 
@@ -120,7 +127,11 @@ cd /Users/daneko/devops/homelabx/homelab
 k3d cluster create --config k3d-bootstrap/k3d-config.yaml
 ```
 
-k3d updates your kubeconfig automatically. Port 6443 is pinned to host port `60070` in the config, so the kubeconfig server URL stays stable across recreations.
+k3d updates your kubeconfig automatically. **Known k3d 5.9 bug:** despite the config pinning 6443 to host port `60070`, the kubeconfig gets `https://0.0.0.0:<random-port>`, which is a dead endpoint. After every recreate, run:
+
+```bash
+kubectl config set-cluster k3d-homelab --server=https://127.0.0.1:60070
+```
 
 ---
 
@@ -134,15 +145,7 @@ These must be in place before ArgoCD syncs, otherwise cert-manager and sealed-se
 kubectl apply -f ~/homelab-pvc-backup/sealed-secrets-keys.yaml
 ```
 
-### mkcert CA
-
-```bash
-kubectl create namespace cert-manager
-kubectl create secret tls mkcert-ca-secret \
-  -n cert-manager \
-  --cert="$(mkcert -CAROOT)/rootCA.pem" \
-  --key="$(mkcert -CAROOT)/rootCA-key.pem"
-```
+The mkcert CA needs no manual step — the repo's `mkcert-ca-secret` SealedSecret (ns `cert-manager`) restores it during the Step 6 sync. See the warning in Step 1 if you ever pre-create it manually.
 
 ---
 
@@ -152,15 +155,25 @@ kubectl create secret tls mkcert-ca-secret \
 # Install ArgoCD
 kubectl apply -k configs/setup/argocd
 
+# ^ Expected failure: the 1.3MB ApplicationSet CRD trips kubectl apply's
+#   262KB last-applied-annotation limit ("metadata.annotations: Too long").
+#   Everything else is created; create that one CRD separately:
+
+python3 -c "
+import re
+raw = open('configs/setup/argocd/base/argocd-install.yaml').read()
+docs = re.split(r'^---\s*$', raw, flags=re.M)
+print(next(d for d in docs if 'applicationsets.argoproj.io' in d and 'kind: CustomResourceDefinition' in d))
+" | kubectl create -f -
+
 # Wait for ArgoCD to come up
 kubectl rollout status deploy/argocd-server -n argocd --timeout=5m
 
-# Restart sealed-secrets controller so it picks up the imported keys
-kubectl rollout restart deploy/sealed-secrets-controller -n kube-system
-
 # Apply the app-of-apps — ArgoCD syncs everything else automatically
-kubectl apply -f argocd/app-of-apps.yaml
+kubectl apply -n argocd -f argocd/app-of-apps.yaml
 ```
+
+The sealed-secrets controller needs no restart: the keys were applied in Step 5, so it picks them up on first start when ArgoCD deploys it.
 
 ArgoCD will pick up all applications and begin syncing. All apps have automated sync with prune and self-heal enabled, so everything converges without intervention.
 
@@ -245,9 +258,12 @@ If you are setting up from scratch with no backup to restore, skip Steps 1, 5, a
 
 ```bash
 k3d cluster create --config k3d-bootstrap/k3d-config.yaml
+# Fix the kubeconfig URL (k3d 5.9 bug, see Step 4)
+kubectl config set-cluster k3d-homelab --server=https://127.0.0.1:60070
 kubectl apply -k configs/setup/argocd
+# Same ApplicationSet CRD workaround as Step 6
 kubectl rollout status deploy/argocd-server -n argocd --timeout=5m
-kubectl apply -f argocd/app-of-apps.yaml
+kubectl apply -n argocd -f argocd/app-of-apps.yaml
 ```
 
 ArgoCD will deploy everything. Apps will initialize fresh on their first run.
