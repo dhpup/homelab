@@ -11,8 +11,8 @@ spec:
   project: setup
   syncPolicy:
     automated:
-      prune: false
-      selfHeal: false
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true  # CRDs (prometheuses, etc.) exceed the client-side apply annotation limit
