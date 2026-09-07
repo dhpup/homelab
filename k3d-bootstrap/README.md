@@ -10,7 +10,7 @@ This folder contains the cluster configuration for the `homelab` k3d cluster.
 
 | Role | Count | Image |
 |------|-------|-------|
-| Server | 1 | `rancher/k3s:v1.35.3-k3s1` (see `k3d-config.yaml`) |
+| Server | 1 | `rancher/k3s:v1.36.4-k3s1` (see `k3d-config.yaml`) |
 | Agent | 3 | same |
 
 Host mounts:
