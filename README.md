@@ -46,7 +46,7 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 | [external-secrets](https://external-secrets.io/) v2.10.0 | Syncs secrets from Infisical Cloud into Kubernetes |
 | external-secrets-store | Deploys the Infisical `ClusterSecretStore` that backs ESO (plain manifests, no chart) |
 | [kargo](https://kargo.io/) v1.11.2 | Progressive delivery and promotion orchestration |
-| [k8s-gateway](https://github.com/ori-edge/k8s_gateway) v2.4.0 | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
+| [k8s-gateway](https://github.com/ori-edge/k8s_gateway) v1.8.2 | CoreDNS plugin — resolves `*.homelab.local` from Ingress/Service resources |
 | [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) v88.6.1 | Observability — Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics |
 | [loki](https://grafana.com/oss/loki/) v7.3.0 | Log aggregation (single-binary, filesystem storage, 14-day retention) |
 | [alloy](https://grafana.com/docs/alloy/) v1.12.1 | DaemonSet log collector — ships pod logs to Loki (Promtail successor) |
@@ -66,12 +66,12 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 | App | Description |
 |-----|-------------|
 | [bazarr](https://www.bazarr.media/) v1.6.1 | Automatic subtitle management |
-| [maintainerr](https://github.com/Maintainerr/Maintainerr) v3.28.0 | Rule-based media cleanup and rotation for Plex/Jellyfin libraries |
-| [prowlarr](https://prowlarr.com/) v2.5.2 | Indexer manager — syncs indexers to Radarr and Sonarr |
+| [maintainerr](https://github.com/Maintainerr/Maintainerr) v3.29.0 | Rule-based media cleanup and rotation for Plex/Jellyfin libraries |
+| [prowlarr](https://prowlarr.com/) v2.6.5 | Indexer manager — syncs indexers to Radarr and Sonarr |
 | [radarr](https://radarr.video/) v6.4.4 | Movie library automation (root: `/homelab-storage/movies`) |
 | [recyclarr](https://recyclarr.dev/) v8.7.2 | Scheduled CronJob — syncs [Trash Guides](https://trash-guides.info/) quality definitions, custom formats, and profiles into Radarr/Sonarr |
 | [sonarr](https://sonarr.tv/) v4.0.20 | TV series library automation (root: `/homelab-storage/tv`) |
-| [tdarr](https://tdarr.io/) v2.87.01 | Automated media transcoding |
+| [tdarr](https://tdarr.io/) v2.89.01 | Automated media transcoding |
 | [unpackerr](https://github.com/unpackerr/unpackerr) v0.16.1 | Unpacks completed downloads and notifies Radarr/Sonarr |
 
 ## Bootstrapping
