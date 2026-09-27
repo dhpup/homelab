@@ -10,7 +10,7 @@ controllers:
       main:
         image:
           repository: lscr.io/linuxserver/bazarr
-          tag: v1.6.1-ls365
+          tag: v1.6.2-ls366
           pullPolicy: IfNotPresent
         env:
           PUID: "0"
