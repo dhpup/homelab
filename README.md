@@ -58,20 +58,20 @@ The `default` project intentionally uses wildcard source/destination/resource pe
 
 | App | Description |
 |-----|-------------|
-| [seerr](https://seerr.dev/) v3.4.1 | Media request portal and discovery (Overseerr/Jellyseerr successor) |
+| [seerr](https://seerr.dev/) v3.5.0 | Media request portal and discovery (Overseerr/Jellyseerr successor) |
 | [doplarr](https://github.com/activexray/doplarr_rs) v4.6.0 | Discord slash-command bot for requesting movies and TV shows via Seerr |
 
 ### Internal
 
 | App | Description |
 |-----|-------------|
-| [bazarr](https://www.bazarr.media/) v1.6.1 | Automatic subtitle management |
-| [maintainerr](https://github.com/Maintainerr/Maintainerr) v3.29.0 | Rule-based media cleanup and rotation for Plex/Jellyfin libraries |
+| [bazarr](https://www.bazarr.media/) v1.6.2 | Automatic subtitle management |
+| [maintainerr](https://github.com/Maintainerr/Maintainerr) v3.30.1 | Rule-based media cleanup and rotation for Plex/Jellyfin libraries |
 | [prowlarr](https://prowlarr.com/) v2.6.5 | Indexer manager — syncs indexers to Radarr and Sonarr |
 | [radarr](https://radarr.video/) v6.4.4 | Movie library automation (root: `/homelab-storage/movies`) |
-| [recyclarr](https://recyclarr.dev/) v8.7.2 | Scheduled CronJob — syncs [Trash Guides](https://trash-guides.info/) quality definitions, custom formats, and profiles into Radarr/Sonarr |
-| [sonarr](https://sonarr.tv/) v4.0.20 | TV series library automation (root: `/homelab-storage/tv`) |
-| [tdarr](https://tdarr.io/) v2.89.01 | Automated media transcoding |
+| [recyclarr](https://recyclarr.dev/) v8.8.0 | Scheduled CronJob — syncs [Trash Guides](https://trash-guides.info/) quality definitions, custom formats, and profiles into Radarr/Sonarr |
+| [sonarr](https://sonarr.tv/) v5.0.0 | TV series library automation (root: `/homelab-storage/tv`) |
+| [tdarr](https://tdarr.io/) v3.01.00 | Automated media transcoding |
 | [unpackerr](https://github.com/unpackerr/unpackerr) v0.16.1 | Unpacks completed downloads and notifies Radarr/Sonarr |
 
 ## Bootstrapping
