@@ -10,7 +10,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/unpackerr/unpackerr
-          tag: 1.0.0
+          tag: 1.0.1
           pullPolicy: IfNotPresent
         env:
           TZ: America/Toronto
