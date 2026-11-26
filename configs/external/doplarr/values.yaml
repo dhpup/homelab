@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/activexray/doplarr_rs
-          tag: v4.6.0
+          tag: v4.7.0
           pullPolicy: IfNotPresent
         env:
           OVERSEERR__URL: http://seerr.seerr.svc.cluster.local:5055
